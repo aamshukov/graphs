@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+staging
+grammars
+libs
+build
+projects/.vs
+tmp/
+x64
+tmp
+*.user
+.vs
