@@ -1,6 +1,5 @@
 import sys
 
-
 def main(args):
     try:
         pass
@@ -11,4 +10,4 @@ def main(args):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-    sys.exit(main(sys.argv[1:]))
+    # buggy microsoft cannot fix the crap --- sys.exit(main(sys.argv[1:]))

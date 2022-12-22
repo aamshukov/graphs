@@ -131,11 +131,13 @@ dmypy.json
 
 staging
 grammars
-libs
-build
+libs/
+build/
 projects/.vs
 tmp/
-x64
-tmp
+x64/
+tmp/
 *.user
-.vs
+.vs/
+TestResults/
+.pytest_cache/

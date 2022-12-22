@@ -4,8 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66dc1fb2-20c7-49f3-a6af-a77534860518</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>tests\test_graphs.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,6 +12,10 @@
     <Name>graphs</Name>
     <RootNamespace>graphs</RootNamespace>
     <InterpreterId>Global|PythonCore|3.11</InterpreterId>
+    <TestFramework>none</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,11 +29,13 @@
     <InterpreterReference Include="Global|PythonCore|3.11" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="tests\" />
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\graphs.py" />
     <Compile Include="src\__init__.py" />
+    <Compile Include="tests\test_graphs.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
