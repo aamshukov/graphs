@@ -30,7 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\graphs.py" />
-    <Compile Include="src\_init_.py" />
+    <Compile Include="src\__init__.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
