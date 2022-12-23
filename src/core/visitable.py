@@ -11,4 +11,4 @@ class Visitable(Objct):
     """
     @abstractmethod
     def accept(self, visitor, *args, **kwargs):
-        visitor.visit(*args, **kwargs)
+        visitor.visit(self, *args, **kwargs)

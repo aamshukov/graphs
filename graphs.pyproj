@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="src\adt\edge.py" />
     <Compile Include="src\adt\graph.py" />
+    <Compile Include="src\core\domainhelper.py" />
     <Compile Include="src\core\objct.py" />
     <Compile Include="src\main.py" />
     <Compile Include="src\adt\vertex.py" />
