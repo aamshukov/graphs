@@ -1,11 +1,15 @@
-"""
-"""
+#! /usr/bin/env python3
+# -*- encoding: utf-8 -*-
+# UI Lab Inc. Arthur Amshukov
+#
 import sys
-
+from core.logger import Logger
 
 """
 """
 def main(args):
+    logger = Logger.initialize('.')
+    logger.debug('kuku')
     try:
         pass
     except Exception as ex:

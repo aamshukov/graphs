@@ -2,3 +2,4 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
+""" Entity type """
