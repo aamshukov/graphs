@@ -11,8 +11,11 @@ from base import Base
 class DomainHelper(Base):
     """
     """
+
     @staticmethod
     def collect_slots(object):
+        """
+        """
         result = set()
         for klass in object.__class__.__mro__:
             result.update(getattr(klass, '__slots__', []))
@@ -20,6 +23,8 @@ class DomainHelper(Base):
 
     @staticmethod
     def collect_dicts(object):
+        """
+        """
         result = set()
         for klass in object.__class__.__mro__:
             result.update(getattr(klass, '__dict__', []))

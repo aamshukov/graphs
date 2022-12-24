@@ -11,7 +11,7 @@
     <Name>graphs</Name>
     <RootNamespace>graphs</RootNamespace>
     <InterpreterId>Global|PythonCore|3.11</InterpreterId>
-    <TestFramework>none</TestFramework>
+    <TestFramework>pytest</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
     <IsWindowsApplication>False</IsWindowsApplication>
@@ -35,7 +35,7 @@
     <Folder Include="src\adt\" />
     <Folder Include="src\algorithms\" />
     <Folder Include="src\patterns\" />
-    <Folder Include="tests\" />
+    <Folder Include="src\tests\" />
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +60,7 @@
     <Compile Include="src\patterns\visitor.py" />
     <Compile Include="src\patterns\__init__.py" />
     <Compile Include="src\__init__.py" />
-    <Compile Include="tests\test_graphs.py" />
+    <Compile Include="src\tests\test_graphs.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\snippets.txt" />

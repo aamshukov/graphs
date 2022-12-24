@@ -14,11 +14,11 @@ class Entity(Value):
         """
         """
         super().__init__(version)
-        self.id = id
+        self._id = id
 
 
     @property
-    def get_id(self):
+    def id(self):
         """
         """
-        return self.id
+        return self._id

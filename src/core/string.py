@@ -13,8 +13,13 @@ from base import Base
 class String(Base):
     """
     """
+
     @staticmethod
     def equal(lhs, rhs, case_insensitive=False, normalization_form='NFC'):
+        """
+        """
+        assert lhs is not None
+        assert rhs is not None
         nfc = functools.partial(normalize, normalization_form)
         if case_insensitive:
             return nfc(lhs).casefold() == nfc(rhs).casefold()

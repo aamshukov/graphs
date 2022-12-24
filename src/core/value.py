@@ -15,14 +15,14 @@ class Value(Equatable):
         """
         """
         super().__init__()
-        self.version = version.strip()
+        self._version = version.strip()
 
 
     @property
-    def get_version(self):
+    def version(self):
         """
         """
-        return self.version
+        return self._version
 
     @abstractmethod
     def validate(self):

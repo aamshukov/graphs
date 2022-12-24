@@ -7,11 +7,12 @@ from abc import abstractmethod
 from ..core.base import Base
 
 
-"""
-"""
 class Visitor(Base):
     """
     """
+
     @abstractmethod
     def visit(self, visitable, *args, **kwargs):
+        """
+        """
         pass

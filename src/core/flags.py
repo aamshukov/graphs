@@ -21,3 +21,7 @@ class Flags(Flag):
     OVERFLOW  = auto()
     UNDERFLOW = auto()
     INVALID   = auto()
+
+    @staticmethod
+    def modify_flags(flags, add, remove):
+        return ((flags & ~remove) | add);

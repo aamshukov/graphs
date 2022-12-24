@@ -13,6 +13,7 @@ def singleton(класс):
         """
         Decorator
         """
+
         def __init__(self, *args, **kwargs):
             """
             """
@@ -32,6 +33,7 @@ def singleton(класс):
         """
         Instance
         """
+
         def __init__(self):
             """
             """
