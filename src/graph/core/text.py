@@ -5,12 +5,12 @@
 """ String extensions """
 import functools
 from unicodedata import normalize
-from base import Base
+from graph.core.base import Base
 
 
 """
 """
-class String(Base):
+class Text(Base):
     """
     """
 

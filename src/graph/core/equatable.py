@@ -5,8 +5,8 @@
 """ Equatable interface """
 import itertools
 import inspect
-from base import Base
-from domainhelper import DomainHelper
+from graph.core.base import Base
+from graph.core.domainhelper import DomainHelper
 
 
 class Equatable(Base):

@@ -3,7 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Domain helper """
-from base import Base
+from graph.core.base import Base
 
 
 """

@@ -20,3 +20,12 @@ if callable(invert_op):
 https://stackoverflow.com/questions/5910703/how-to-get-all-methods-of-a-python-class-with-given-decorator
 
 
+
+
+#sys.path.append(os.path.abspath('src'))
+#sys.path.append(os.path.abspath('adt'))
+#sys.path.append(os.path.abspath('core'))
+#sys.path.append(os.path.abspath('patterns'))
+#sys.path.append(os.path.abspath('algorithms'))
+
+

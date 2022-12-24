@@ -2,17 +2,17 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" Visitable design pattern """
+""" Visitor design pattern """
 from abc import abstractmethod
-from ..core.base import Base
+from graph.core.base import Base
 
 
-class Visitable(Base):
+class Visitor(Base):
     """
     """
 
     @abstractmethod
-    def accept(self, visitor, *args, **kwargs):
+    def visit(self, visitable, *args, **kwargs):
         """
         """
         pass

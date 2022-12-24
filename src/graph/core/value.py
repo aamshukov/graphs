@@ -4,7 +4,7 @@
 #
 """ Value type """
 from abc import abstractmethod
-from equatable import Equatable
+from graph.core.equatable import Equatable
 
 
 class Value(Equatable):

@@ -3,7 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Entity type """
-from value import Value
+from graph.core.value import Value
 
 
 class Entity(Value):

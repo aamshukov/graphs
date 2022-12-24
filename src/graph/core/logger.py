@@ -5,7 +5,7 @@
 """ Logger wrapper """
 import os
 import logging
-from base import Base
+from graph.core.base import Base
 
 
 class Logger(Base):

@@ -3,9 +3,9 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph data type """
-from ..core.entity import Entity
-from vertex import Vertex
-from edge import Edge
+from graph.core.entity import Entity
+from graph.adt.vertex import Vertex
+from graph.adt.edge import Edge
 
 
 class Graph(Entity):
@@ -16,10 +16,11 @@ class Graph(Entity):
         """
         """
         super().__init__(id, version)
-        self._root = None  # optional, used in some digraph algorithms
-        self._digraph;  # directed or not
+        self._root = None        # optional, used in some digraph algorithms
+        self._digraph = digraph  # directed or not
         self._vertices = set()
         self._edges = set()
+        self._synthetic_edges = set();  # holds synthetic edges in undirected graphs
 
     @property
     def root(self):
@@ -52,6 +53,31 @@ class Graph(Entity):
         return self._edges
 
     def validate(self):
+        """
+        """
+        pass
+
+    def add_vertex(self, vertex):
+        """
+        """
+        pass
+
+    def remove_vertex(self, vertex):
+        """
+        """
+        pass
+
+    def get_edges(self, vertex):
+        """
+        """
+        pass
+
+    def add_edge(self, vertex_u, vertex_v, edge_value=None):
+        """
+        """
+        pass
+
+    def remove_edge(self, edge):
         """
         """
         pass

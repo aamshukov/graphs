@@ -3,9 +3,8 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Edge """
-from ..core.value import Value
-from ..core.flags import Flags
-from vertex import Vertex
+from graph.core.value import Value
+from graph.core.flags import Flags
 
 
 class Edge(Value):
@@ -20,6 +19,7 @@ class Edge(Value):
         """
         """
         super().__init__(version)
+        from graph.adt.vertex import Vertex  # avoid circular import
         self._end_points = [Vertex(version=version)] * rank
         self._value = value
         self._flags = flags

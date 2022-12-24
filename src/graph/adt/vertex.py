@@ -3,10 +3,11 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Vertex """
-from ..core.value import Value
-from ..core.flags import Flags
-from ..core.colors import Colors
-from ..patterns.visitable import Visitable
+from graph.core.value import Value
+from graph.core.flags import Flags
+from graph.core.colors import Colors
+from graph.patterns.visitable import Visitable
+from graph.adt.edge import Edge
 
 
 class Vertex(Value, Visitable):
@@ -27,6 +28,8 @@ class Vertex(Value, Visitable):
         self._flags = flags
         self._color = color
         self._adjacencies = set()
+        self._edges = set()
+        self._ref_count = 0
 
     @property
     def label(self):
@@ -81,6 +84,32 @@ class Vertex(Value, Visitable):
         """
         """
         return self._adjacencies
+
+    @property
+    def edges(self):
+        """
+        """
+        return self._edges
+
+    @property
+    def ref_count(self):
+        """
+        """
+        return self._ref_count
+
+    def add_ref(self):
+        """
+        """
+        return ++self._ref_count
+
+    def release(self):
+        """
+        """
+        if self._ref_count > 0:
+            self._ref_count -= 1
+        else:
+            raise Exception("Vertex release ref count error.")
+        return self._ref_count
 
     def validate(self):
         """

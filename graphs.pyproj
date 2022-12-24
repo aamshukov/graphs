@@ -4,8 +4,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66dc1fb2-20c7-49f3-a6af-a77534860518</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>src\main.py</StartupFile>
-    <SearchPath>src/core;src/adt;src/patterns;src/algoritms;src</SearchPath>
+    <StartupFile>src\graph\main.py</StartupFile>
+    <SearchPath>src\core;src\adt;src\patterns;src\algoritms;src</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>graphs</Name>
@@ -31,36 +31,40 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docs\" />
-    <Folder Include="src\core\" />
-    <Folder Include="src\adt\" />
-    <Folder Include="src\algorithms\" />
-    <Folder Include="src\patterns\" />
-    <Folder Include="src\tests\" />
+    <Folder Include="src\graph\" />
+    <Folder Include="src\graph\adt\" />
+    <Folder Include="src\graph\algorithms\" />
+    <Folder Include="src\graph\core\" />
+    <Folder Include="src\graph\patterns\" />
+    <Folder Include="src\graph\tests\" />
     <Folder Include="src\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\adt\edge.py" />
-    <Compile Include="src\adt\graph.py" />
-    <Compile Include="src\adt\__init__.py" />
-    <Compile Include="src\algorithms\__init__.py" />
-    <Compile Include="src\core\colors.py" />
-    <Compile Include="src\core\domainhelper.py" />
-    <Compile Include="src\core\entity.py" />
-    <Compile Include="src\core\equatable.py" />
-    <Compile Include="src\core\flags.py" />
-    <Compile Include="src\core\logger.py" />
-    <Compile Include="src\core\base.py" />
-    <Compile Include="src\core\value.py" />
-    <Compile Include="src\core\__init__.py" />
-    <Compile Include="src\patterns\singleton.py" />
-    <Compile Include="src\core\string.py" />
-    <Compile Include="src\main.py" />
-    <Compile Include="src\adt\vertex.py" />
-    <Compile Include="src\patterns\visitable.py" />
-    <Compile Include="src\patterns\visitor.py" />
-    <Compile Include="src\patterns\__init__.py" />
-    <Compile Include="src\__init__.py" />
-    <Compile Include="src\tests\test_graphs.py" />
+    <Compile Include="src\graph\adt\disjoint_set.py" />
+    <Compile Include="src\graph\adt\edge.py" />
+    <Compile Include="src\graph\adt\graph.py" />
+    <Compile Include="src\graph\adt\vertex.py" />
+    <Compile Include="src\graph\adt\__init__.py" />
+    <Compile Include="src\graph\algorithms\graph_algorithms.py" />
+    <Compile Include="src\graph\algorithms\__init__.py" />
+    <Compile Include="src\graph\core\base.py" />
+    <Compile Include="src\graph\core\colors.py" />
+    <Compile Include="src\graph\core\domainhelper.py" />
+    <Compile Include="src\graph\core\entity.py" />
+    <Compile Include="src\graph\core\equatable.py" />
+    <Compile Include="src\graph\core\flags.py" />
+    <Compile Include="src\graph\core\logger.py" />
+    <Compile Include="src\graph\core\text.py" />
+    <Compile Include="src\graph\core\value.py" />
+    <Compile Include="src\graph\core\__init__.py" />
+    <Compile Include="src\graph\main.py" />
+    <Compile Include="src\graph\patterns\singleton.py" />
+    <Compile Include="src\graph\patterns\visitable.py" />
+    <Compile Include="src\graph\patterns\visitor.py" />
+    <Compile Include="src\graph\patterns\__init__.py" />
+    <Compile Include="src\graph\tests\test_graphs.py" />
+    <Compile Include="src\graph\tests\__init__.py" />
+    <Compile Include="src\graph\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\snippets.txt" />
