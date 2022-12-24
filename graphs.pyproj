@@ -38,6 +38,7 @@
     <Folder Include="src\graph\patterns\" />
     <Folder Include="src\graph\tests\" />
     <Folder Include="src\" />
+    <Folder Include="src\graph\tests\data\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\graph\adt\disjoint_set.py" />
@@ -68,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\snippets.txt" />
+    <Content Include="src\graph\tests\data\large_ds.txt" />
+    <Content Include="src\graph\tests\data\medium_ds.txt" />
+    <Content Include="src\graph\tests\data\tiny_ds.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

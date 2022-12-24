@@ -5,6 +5,7 @@
 import os
 import sys
 import pytest
+import random
 
 from graph.core.logger import Logger
 from graph.core.text import Text
@@ -128,3 +129,61 @@ class TestClass:
         djs.union('G', 'B')
         djs.union('I', 'J')
         assert djs.count == 1
+
+    def test_disjounset_ints_success(self):  # union find
+        n = 10000
+        elements = [random.randint(0, n) for _ in range(n)]
+        djs = DisjointSet(elements)
+        for k in range(0, n, 2):
+            djs.union(elements[k + 0], elements[k + 1])
+            assert djs.find(elements[k + 0]) == djs.find(elements[k + 1])
+        for k in range(n):
+            djs.find(elements[k])
+
+    def test_disjounset_ints_sedgewick_success(self):  # union find
+        elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        djs = DisjointSet(elements)
+        djs.union(4, 3)
+        djs.union(3, 8)
+        djs.union(6, 5)
+        djs.union(9, 4)
+        djs.union(2, 1)
+        djs.union(5, 0)
+        djs.union(7, 2)
+        djs.union(6, 1)
+        assert djs.find(4) == djs.find(3)
+        assert djs.find(3) == djs.find(8)
+        assert djs.find(6) == djs.find(5)
+        assert djs.find(9) == djs.find(4)
+        assert djs.find(2) == djs.find(1)
+        assert djs.find(5) == djs.find(0)
+        assert djs.find(7) == djs.find(2)
+        assert djs.find(6) == djs.find(1)
+        assert djs.count == 2
+
+    def test_disjounset_ints_sedgewick_tiny_success(self):  # union find
+        elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        djs = DisjointSet(elements)
+        with open(os.path.abspath(r'src/graph/tests/data/tiny_ds.txt'), 'r') as stream:
+            while line := stream.readline().rstrip():
+                el1, el2 = line.split()
+                djs.union(int(el1), int(el2))
+        assert djs.count == 2
+
+    def test_disjounset_ints_sedgewick_medium_success(self):  # union find
+        elements = [k for k in range(625)]
+        djs = DisjointSet(elements)
+        with open(os.path.abspath(r'src/graph/tests/data/medium_ds.txt'), 'r') as stream:
+            while line := stream.readline().rstrip():
+                el1, el2 = line.split()
+                djs.union(int(el1), int(el2))
+        assert djs.count == 3
+
+    def test_disjounset_ints_sedgewick_large_success(self):  # union find
+        elements = [k for k in range(1000000)]
+        djs = DisjointSet(elements)
+        with open(os.path.abspath(r'src/graph/tests/data/large_ds.txt'), 'r') as stream:
+            while line := stream.readline().rstrip():
+                el1, el2 = line.split()
+                djs.union(int(el1), int(el2))
+        assert djs.count == 6
