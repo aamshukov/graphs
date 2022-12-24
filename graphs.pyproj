@@ -4,9 +4,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66dc1fb2-20c7-49f3-a6af-a77534860518</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>tests\test_graphs.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>src\main.py</StartupFile>
+    <SearchPath>src/core;src/adt;src/patterns;src/algoritms;src</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>graphs</Name>
@@ -16,6 +15,8 @@
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
     <IsWindowsApplication>False</IsWindowsApplication>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,6 +30,7 @@
     <InterpreterReference Include="Global|PythonCore|3.11" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="docs\" />
     <Folder Include="src\core\" />
     <Folder Include="src\adt\" />
     <Folder Include="src\algorithms\" />
@@ -39,20 +41,29 @@
   <ItemGroup>
     <Compile Include="src\adt\edge.py" />
     <Compile Include="src\adt\graph.py" />
+    <Compile Include="src\adt\__init__.py" />
+    <Compile Include="src\algorithms\__init__.py" />
+    <Compile Include="src\core\colors.py" />
     <Compile Include="src\core\domainhelper.py" />
     <Compile Include="src\core\entity.py" />
     <Compile Include="src\core\equatable.py" />
+    <Compile Include="src\core\flags.py" />
     <Compile Include="src\core\logger.py" />
     <Compile Include="src\core\base.py" />
     <Compile Include="src\core\value.py" />
+    <Compile Include="src\core\__init__.py" />
     <Compile Include="src\patterns\singleton.py" />
     <Compile Include="src\core\string.py" />
     <Compile Include="src\main.py" />
     <Compile Include="src\adt\vertex.py" />
     <Compile Include="src\patterns\visitable.py" />
     <Compile Include="src\patterns\visitor.py" />
+    <Compile Include="src\patterns\__init__.py" />
     <Compile Include="src\__init__.py" />
     <Compile Include="tests\test_graphs.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docs\snippets.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -5,12 +5,9 @@
 """ Logger wrapper """
 import os
 import logging
-
-from ..patterns.singleton import singleton
 from base import Base
 
 
-@singleton
 class Logger(Base):
     """
     Logger
@@ -20,6 +17,7 @@ class Logger(Base):
     def __init__(self, level=logging.DEBUG, path=None):
         """
         """
+        super().__init__()
         self.logger = logging.getLogger(Logger.LOGGER_NAME)
         self.logger.setLevel(level)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -64,9 +62,3 @@ class Logger(Base):
         """
         """
         self.logger.critical(msg, *args, **kwargs)
-
-    @staticmethod
-    def initialize(level=logging.DEBUG, path=None):
-        """
-        """
-        Logger(level, path)

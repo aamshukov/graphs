@@ -4,7 +4,6 @@
 #
 """ String extensions """
 import functools
-
 from unicodedata import normalize
 from base import Base
 

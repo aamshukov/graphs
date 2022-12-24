@@ -22,7 +22,7 @@ def singleton(класс):
         def __repr__(self):
             """
             """
-            return класс.__name__ + ' - singleton'
+            return f'{класс.__name__}-singleton'
 
         __str__ = __repr__
 

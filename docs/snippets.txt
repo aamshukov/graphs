@@ -1,0 +1,22 @@
+https://martinheinz.dev/blog/32
+class Person:
+    def __init__(self, **kwargs):
+        self.__dict__.update(**kwargs)
+
+class Person:
+    def __init__(self, **kwargs):
+        vars(self).update(**kwargs)  # Alternatively use `vars()`
+The snippet above demonstrates usage of self.__dict__ which is a dictionary which stores all the attributes of class (unless __slots__ is declared)
+
+
+
+https://stackoverflow.com/questions/5268404/what-is-the-fastest-way-to-check-if-a-class-has-a-function-defined
+invert_op = getattr(self, "invert_op", None)
+if callable(invert_op):
+    invert_op(self.path.parent_op)
+
+
+
+https://stackoverflow.com/questions/5910703/how-to-get-all-methods-of-a-python-class-with-given-decorator
+
+
