@@ -4,8 +4,8 @@
 #
 import os
 import sys
-import pytest
 import random
+import unittest
 
 from graph.core.logger import Logger
 from graph.core.text import Text
@@ -19,25 +19,25 @@ from graph.adt.disjoint_set import DisjointSet
 
 class Person(Entity):
     def __init__(self, name, age, address, manager=None):
-        super().__init__('2.1')
+        super().__init__(1, '2.1')
         self._name = name
         self._age = age
         self._manager = manager
         self._address = address
 
-    @property    
+    @property
     def name(self):
         return self._name
 
-    @property    
+    @property
     def age(self):
         return self._age
 
-    @property    
+    @property
     def manager(self):
         return self._manager
 
-    @property    
+    @property
     def address(self):
         return self._address
 
@@ -53,11 +53,11 @@ class Address(Value):
         self._street = street
         self._city = city
 
-    @property    
+    @property
     def street(self):
         return self._street
 
-    @property    
+    @property
     def city(self):
         return self._city
 
@@ -65,9 +65,9 @@ class Address(Value):
         pass
 
 
-class TestClass:
+class Test(unittest.TestCase):
     def test_logger_success(self):
-        path=r'd:\tmp'
+        path = r'd:\tmp'
         logger = Logger(path=path)
         logger.debug('kuku')
         assert os.path.exists(os.path.join(path, f'{Logger.LOGGER_NAME}.log'))
@@ -114,7 +114,7 @@ class TestClass:
         assert flags & Flags.GENUINE == Flags.GENUINE
         assert flags & Flags.SYNTHETIC == Flags.SYNTHETIC
 
-    def test_disjounset_success(self):  # union find
+    def test_disjoinset_success(self):  # union find
         elements = list('ABCDEFGHIJ')
         djs = DisjointSet(elements)
         djs.union('A', 'B')
@@ -130,7 +130,7 @@ class TestClass:
         djs.union('I', 'J')
         assert djs.count == 1
 
-    def test_disjounset_ints_success(self):  # union find
+    def test_disjoinset_ints_success(self):  # union find
         n = 10000
         elements = [random.randint(0, n) for _ in range(n)]
         djs = DisjointSet(elements)
@@ -140,7 +140,7 @@ class TestClass:
         for k in range(n):
             djs.find(elements[k])
 
-    def test_disjounset_ints_sedgewick_success(self):  # union find
+    def test_disjoinset_ints_sedgewick_success(self):  # union find
         elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         djs = DisjointSet(elements)
         djs.union(4, 3)
@@ -161,29 +161,35 @@ class TestClass:
         assert djs.find(6) == djs.find(1)
         assert djs.count == 2
 
-    def test_disjounset_ints_sedgewick_tiny_success(self):  # union find
+    def test_disjoinset_ints_sedgewick_tiny_success(self):  # union find
         elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         djs = DisjointSet(elements)
-        with open(os.path.abspath(r'src/graph/tests/data/tiny_ds.txt'), 'r') as stream:
+        with open(os.path.abspath(r'data/tiny_ds.txt'), 'r') as stream:
             while line := stream.readline().rstrip():
                 el1, el2 = line.split()
                 djs.union(int(el1), int(el2))
         assert djs.count == 2
 
-    def test_disjounset_ints_sedgewick_medium_success(self):  # union find
+    def test_disjoinset_ints_sedgewick_medium_success(self):  # union find
         elements = [k for k in range(625)]
         djs = DisjointSet(elements)
-        with open(os.path.abspath(r'src/graph/tests/data/medium_ds.txt'), 'r') as stream:
+        with open(os.path.abspath(r'data/medium_ds.txt'), 'r') as stream:
             while line := stream.readline().rstrip():
                 el1, el2 = line.split()
                 djs.union(int(el1), int(el2))
         assert djs.count == 3
 
-    def test_disjounset_ints_sedgewick_large_success(self):  # union find
+    def test_disjoinset_ints_sedgewick_large_success(self):  # union find
         elements = [k for k in range(1000000)]
         djs = DisjointSet(elements)
-        with open(os.path.abspath(r'src/graph/tests/data/large_ds.txt'), 'r') as stream:
+        with open(os.path.abspath(r'data/large_ds.txt'), 'r') as stream:
             while line := stream.readline().rstrip():
                 el1, el2 = line.split()
                 djs.union(int(el1), int(el2))
         assert djs.count == 6
+
+
+if __name__ == '__main__':
+    """
+    """
+    unittest.main()

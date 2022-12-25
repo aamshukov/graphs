@@ -3,18 +3,19 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Vertex """
-from graph.core.value import Value
 from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.patterns.visitable import Visitable
+from graph.core.entity import Entity
 from graph.adt.edge import Edge
 
 
-class Vertex(Value, Visitable):
+class Vertex(Entity, Visitable):
     """
     """
 
     def __init__(self,
+                 id,
                  label='',
                  value=None,  # vertex value
                  flags=Flags.CLEAR,
@@ -22,7 +23,7 @@ class Vertex(Value, Visitable):
                  version='1.0'):
         """
         """
-        super().__init__(version)
+        super().__init__(id, version)
         self._label = label
         self._value = value
         self._flags = flags

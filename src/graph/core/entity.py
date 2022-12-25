@@ -10,7 +10,7 @@ class Entity(Value):
     """
     """
 
-    def __init__(self, id=0, version='1.0'):
+    def __init__(self, id, version='1.0'):
         """
         """
         super().__init__(version)
