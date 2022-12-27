@@ -23,6 +23,13 @@ class Edge(Value):
         self._value = value
         self._flags = flags
 
+    def __repr__(self):
+        """
+        """
+        return f"{self._value}:{self._flags}:({self._endpoints})"
+
+    __str__ = __repr__
+
     @property
     def endpoints(self):
         """

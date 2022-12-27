@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+﻿#! /usr/bin/env python3
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
@@ -27,8 +27,15 @@ class Vertex(Entity, Visitable):
         self._value = value
         self._flags = flags
         self._color = color
-        self._adjacencies = set()
         self._ref_count = 0
+        self._adjacencies = set()
+
+    def __repr__(self):
+        """
+        """
+        return f"{self._label}:{self._value}:{self._flags}:{self._color}:{self._ref_count}:[{self._adjacencies}]"
+
+    __str__ = __repr__
 
     @property
     def label(self):
