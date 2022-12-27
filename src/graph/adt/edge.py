@@ -12,23 +12,22 @@ class Edge(Value):
     """
 
     def __init__(self,
-                 value=None,  # edge value, might be weight
+                 value=None,  # edge value, might be weight, etc.
                  flags=Flags.CLEAR,
                  rank=2,  # usually has two vertices and more vertices in hyper-graphs
                  version='1.0'):
         """
         """
         super().__init__(version)
-        from graph.adt.vertex import Vertex  # avoid circular import
-        self._end_points = [Vertex(version=version)] * rank
+        self._endpoints = [None] * rank
         self._value = value
         self._flags = flags
 
     @property
-    def end_points(self):
+    def endpoints(self):
         """
         """
-        return self._end_points
+        return self._endpoints
 
     @property
     def value(self):

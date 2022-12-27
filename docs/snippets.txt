@@ -29,3 +29,20 @@ https://stackoverflow.com/questions/5910703/how-to-get-all-methods-of-a-python-c
 #sys.path.append(os.path.abspath('algorithms'))
 
 
+import importlib
+ modnames = ["os", "sys", "math"]
+ for lib in modnames:
+     globals()[lib] = importlib.import_module(lib)
+
+
+
+# How to merge two dictionaries
+# in Python 3.5+
+>>> x = {'a': 1, 'b': 2}
+>>> y = {'b': 3, 'c': 4}
+>>> z = {**x, **y}
+>>> z
+{'c': 4, 'a': 1, 'b': 3}
+
+
+

@@ -7,7 +7,6 @@ from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.patterns.visitable import Visitable
 from graph.core.entity import Entity
-from graph.adt.edge import Edge
 
 
 class Vertex(Entity, Visitable):
@@ -29,7 +28,6 @@ class Vertex(Entity, Visitable):
         self._flags = flags
         self._color = color
         self._adjacencies = set()
-        self._edges = set()
         self._ref_count = 0
 
     @property
@@ -85,12 +83,6 @@ class Vertex(Entity, Visitable):
         """
         """
         return self._adjacencies
-
-    @property
-    def edges(self):
-        """
-        """
-        return self._edges
 
     @property
     def ref_count(self):
