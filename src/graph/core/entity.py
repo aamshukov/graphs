@@ -16,9 +16,13 @@ class Entity(Value):
         super().__init__(version)
         self._id = id
 
-
     @property
     def id(self):
         """
         """
         return self._id
+
+    def validate(self):
+        """
+        """
+        pass

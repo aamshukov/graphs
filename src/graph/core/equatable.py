@@ -13,6 +13,13 @@ class Equatable(Base):
     """
     """
 
+    def __hash__(self):
+        components = Equatable.collect_equality_components(self)
+        result = 0
+        for component in components:
+            result ^= hash(component)
+        return result
+
     def __eq__(self, other):
         """
         """

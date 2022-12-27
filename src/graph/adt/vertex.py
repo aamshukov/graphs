@@ -28,7 +28,7 @@ class Vertex(Entity, Visitable):
         self._flags = flags
         self._color = color
         self._ref_count = 0
-        self._adjacencies = set()
+        self._adjacencies = list()
 
     def __repr__(self):
         """

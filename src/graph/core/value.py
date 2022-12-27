@@ -17,7 +17,6 @@ class Value(Equatable):
         super().__init__()
         self._version = version.strip()
 
-
     @property
     def version(self):
         """

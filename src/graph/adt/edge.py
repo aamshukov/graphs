@@ -3,22 +3,23 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Edge """
-from graph.core.value import Value
 from graph.core.flags import Flags
+from graph.core.entity import Entity
 
 
-class Edge(Value):
+class Edge(Entity):
     """
     """
 
     def __init__(self,
+                 id,
                  value=None,  # edge value, might be weight, etc.
+                 rank=2,      # usually has two vertices and more vertices in hyper-graphs
                  flags=Flags.CLEAR,
-                 rank=2,  # usually has two vertices and more vertices in hyper-graphs
                  version='1.0'):
         """
         """
-        super().__init__(version)
+        super().__init__(id, version)
         self._endpoints = [None] * rank
         self._value = value
         self._flags = flags

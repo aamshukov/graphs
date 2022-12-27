@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>66dc1fb2-20c7-49f3-a6af-a77534860518</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>src\graph\main.py</StartupFile>
+    <StartupFile>src\graph\__main__.py</StartupFile>
     <SearchPath>src</SearchPath>
     <WorkingDirectory>src</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -60,11 +60,11 @@
     <Compile Include="src\graph\core\text.py" />
     <Compile Include="src\graph\core\value.py" />
     <Compile Include="src\graph\core\__init__.py" />
-    <Compile Include="src\graph\main.py" />
     <Compile Include="src\graph\patterns\singleton.py" />
     <Compile Include="src\graph\patterns\visitable.py" />
     <Compile Include="src\graph\patterns\visitor.py" />
     <Compile Include="src\graph\patterns\__init__.py" />
+    <Compile Include="src\graph\__main__.py" />
     <Compile Include="src\tests\test_graphs.py" />
     <Compile Include="src\tests\__init__.py" />
     <Compile Include="src\graph\__init__.py" />
