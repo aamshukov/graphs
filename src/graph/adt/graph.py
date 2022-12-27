@@ -21,7 +21,7 @@ class Graph(Entity):
         self._digraph = digraph  # directed or not
         self._vertices = set()
         self._edges = set()
-        self._vertex_edges_map = defaultdict(lambda: set())  # mapping vertex to edges
+        self._vertex_edges_map = defaultdict(lambda: set())  # vertex-to-edges mapping
 
     @property
     def root(self):
@@ -91,7 +91,7 @@ class Graph(Entity):
         result.endpoints[0] = vertex_u
         result.endpoints[1] = vertex_v
         self._edges.add(result)
-        # update vertices edges mapping
+        # update vertex-to-edges mapping
         self._vertex_edges_map[vertex_u].add(result)
         self._vertex_edges_map[vertex_v].add(result)  # including digraphs
         return result
@@ -99,7 +99,18 @@ class Graph(Entity):
     def remove_edge(self, edge):
         """
         """
-        pass
+        vertex_u = edge.endpoints[0]
+        vertex_v = edge.endpoints[1]
+        assert vertex_u in self.vertices, f"Missing vertex: {vertex_u}"
+        assert vertex_v in self.vertices, f"Missing vertex: {vertex_v}"
+        vertex_u.adjacencies.remove(vertex_v)   # break U, V relation
+        vertex_v.adjacencies.discard(vertex_u)  # break V, U relation (discard as it can be digraph)
+        self._vertex_edges_map[vertex_u].remove(edge)  # clean up vertex_u-to-edges map
+        self._vertex_edges_map[vertex_v].remove(edge)  # clean up vertex_v-to-edges map
+        vertex_v.release()      # decrement V ref counter
+        if not self._digraph:
+            vertex_u.release()  # decrement U ref counter
+        self._edges.remove(edge)
 
     def validate(self):
         """
