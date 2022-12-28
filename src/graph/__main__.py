@@ -30,7 +30,7 @@ class GraphVisualization:
         import matplotlib
         import matplotlib.pyplot as plt
         plt.style.use('ggplot')
-        matplotlib.use( 'tkagg' )
+        matplotlib.use('tkagg')
         G = nx.Graph()
         G.add_edges_from(self.visual)
         nx.draw_networkx(G)
@@ -54,7 +54,7 @@ def main(args):
         import matplotlib.pyplot as plt
         plt.style.use('ggplot')
         matplotlib.use('tkagg')
-        graph = Graph()
+        graph = Graph(digraph=True)
         v1 = Vertex(1, 'odin')
         v2 = Vertex(2, 'dva')
         v3 = Vertex(3, 'three')

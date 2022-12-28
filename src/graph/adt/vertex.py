@@ -29,6 +29,7 @@ class Vertex(Entity, Visitable):
         self._color = color
         self._ref_count = 0
         self._adjacencies = list()
+        self._predecessors = list()
 
     def __repr__(self):
         """
@@ -90,6 +91,12 @@ class Vertex(Entity, Visitable):
         """
         """
         return self._adjacencies
+
+    @property
+    def predecessors(self):
+        """
+        """
+        return self._predecessors
 
     @property
     def ref_count(self):

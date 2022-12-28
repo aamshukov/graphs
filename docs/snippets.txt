@@ -66,3 +66,23 @@ if any((x, y, z)):
 
 
 
+
+    @staticmethod
+    def collect_predecessors(vertex, graph):
+        """
+        """
+        assert vertex is not None, "Invalid argument 'vertex'"
+        assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
+        result = list()
+        if graph.digraph:
+            pass
+        else:
+            edges = graph.get_edges(vertex)
+            for edge in edges:
+                vertex_u = edge.endpoints[0]
+                vertex_v = edge.endpoints[1]
+                if vertex == vertex_v:  # incoming edge
+                    result.append(vertex_u)
+        return result
+
+

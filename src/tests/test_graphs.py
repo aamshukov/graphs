@@ -7,13 +7,14 @@ import sys
 import random
 import unittest
 
+from graph.core.flags import Flags
 from graph.core.logger import Logger
 from graph.core.text import Text
-from graph.core.flags import Flags
-from graph.core.entity import Entity
 from graph.core.value import Value
+from graph.core.entity import Entity
 from graph.adt.vertex import Vertex
 from graph.adt.edge import Edge
+from graph.adt.graph import Graph
 from graph.adt.disjoint_set import DisjointSet
 
 
@@ -66,6 +67,32 @@ class Address(Value):
 
 
 class Test(unittest.TestCase):
+    @staticmethod
+    def build_networkx_graph(graph):
+        """
+        """
+        import networkx as nx
+        if graph.digraph:
+            result = nx.DiGraph()
+        else:
+            result = nx.Graph()
+        for vertex in graph.vertices.values():
+            result.add_node(vertex.label)
+        for edge in graph.edges.values():
+            result.add_edge(edge.endpoints[0].label, edge.endpoints[1].label)
+        return result
+
+    @staticmethod
+    def show_graph(graph):
+        import networkx as nx
+        import matplotlib
+        import matplotlib.pyplot as plt
+        plt.style.use('ggplot')
+        matplotlib.use('tkagg')
+        nx_graph = Test.build_networkx_graph(graph)
+        nx.draw_networkx(nx_graph)
+        plt.show()
+
     def test_logger_success(self):
         path = r'd:\tmp'
         logger = Logger(path=path)
@@ -94,11 +121,15 @@ class Test(unittest.TestCase):
         assert Text.equal('Rit\u0113', 'Rite\u0304')
         assert not Text.equal('', ' ')
         assert Text.equal('(ノಠ益ಠ)ノ彡 ɹoʇıpƎ ʇxǝ⊥', '(ノಠ益ಠ)ノ彡 ɹoʇıpƎ ʇxǝ⊥')
-        assert Text.equal('သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း offline အသုံးပြုနိုင်တဲ့ converter တစ်', 'သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း offline အသုံးပြုနိုင်တဲ့ converter တစ်')
+        assert Text.equal('သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း '
+                          'offline အသုံးပြုနိုင်တဲ့ converter တစ်',
+                          'သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း '
+                          'offline အသုံးပြုနိုင်တဲ့ converter တစ်')
         assert Text.equal('Я с детства хотел завести собаку', 'Я с детства хотел завести собаку')
         assert not Text.equal('Я c детства хотел завести собаку', 'Я с детства хотел завести собаку')
         assert Text.equal('english text', 'english text')
-        assert Text.equal('山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇', '山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇')
+        assert Text.equal('山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇',
+                          '山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇')
         assert Text.equal('enGlisH texT', 'EngLish TeXt', case_insensitive=True)
         assert Text.equal('Я с дЕТства хоТЕЛ зАВестИ Собаку', 'я с деТСтвА ХотЕЛ ЗАВЕСТИ СОБАКУ', case_insensitive=True)
 
@@ -109,7 +140,8 @@ class Test(unittest.TestCase):
         assert flags & Flags.VISITED == Flags.VISITED
         assert flags & Flags.LEAF == Flags.LEAF
         assert flags & Flags.INVALID == Flags.INVALID
-        flags = Flags.modify_flags(flags, Flags.GENUINE | Flags.SYNTHETIC, Flags.PROCESSED | Flags.VISITED | Flags.INVALID)
+        flags = Flags.modify_flags(flags,
+                                   Flags.GENUINE | Flags.SYNTHETIC, Flags.PROCESSED | Flags.VISITED | Flags.INVALID)
         assert flags & Flags.DIRTY == Flags.DIRTY
         assert flags & Flags.GENUINE == Flags.GENUINE
         assert flags & Flags.SYNTHETIC == Flags.SYNTHETIC
@@ -130,7 +162,7 @@ class Test(unittest.TestCase):
         djs.union('I', 'J')
         assert djs.count == 1
 
-    def test_disjoinset_ints_success(self):  # union find
+    def test_disjoint_set_ints_success(self):  # union find
         n = 10000
         elements = [random.randint(0, n) for _ in range(n)]
         djs = DisjointSet(elements)
@@ -140,7 +172,7 @@ class Test(unittest.TestCase):
         for k in range(n):
             djs.find(elements[k])
 
-    def test_disjoinset_ints_sedgewick_success(self):  # union find
+    def test_disjoint_set_ints_sedgewick_success(self):  # union find
         elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         djs = DisjointSet(elements)
         djs.union(4, 3)
@@ -161,7 +193,7 @@ class Test(unittest.TestCase):
         assert djs.find(6) == djs.find(1)
         assert djs.count == 2
 
-    def test_disjoinset_ints_sedgewick_tiny_success(self):  # union find
+    def test_disjoint_set_ints_sedgewick_tiny_success(self):  # union find
         elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         djs = DisjointSet(elements)
         with open(os.path.abspath(r'data/tiny_ds.txt'), 'r') as stream:
@@ -170,7 +202,7 @@ class Test(unittest.TestCase):
                 djs.union(int(el1), int(el2))
         assert djs.count == 2
 
-    def test_disjoinset_ints_sedgewick_medium_success(self):  # union find
+    def test_disjoint_set_ints_sedgewick_medium_success(self):  # union find
         elements = [k for k in range(625)]
         djs = DisjointSet(elements)
         with open(os.path.abspath(r'data/medium_ds.txt'), 'r') as stream:
@@ -179,7 +211,7 @@ class Test(unittest.TestCase):
                 djs.union(int(el1), int(el2))
         assert djs.count == 3
 
-    def test_disjoinset_ints_sedgewick_large_success(self):  # union find
+    def test_disjoint_set_ints_sedgewick_large_success(self):  # union find
         elements = [k for k in range(1000000)]
         djs = DisjointSet(elements)
         with open(os.path.abspath(r'data/large_ds.txt'), 'r') as stream:

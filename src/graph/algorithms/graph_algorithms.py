@@ -16,10 +16,16 @@ class GraphAlgorithms(Base):
     def collect_predecessors(vertex, graph):
         """
         """
-        pass
+        assert vertex is not None, "Invalid argument 'vertex'"
+        assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
+        result = [predecessor for predecessor in graph.get_vertex_predecessors(vertex)]
+        return result
 
     @staticmethod
     def collect_successors(vertex, graph):
         """
         """
-        pass
+        assert vertex is not None, "Invalid argument 'vertex'"
+        assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
+        result = [adjacent for adjacent in vertex.adjacencies]
+        return result

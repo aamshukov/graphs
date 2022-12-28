@@ -17,7 +17,7 @@ class DisjointSet(Base):
         """
         """
         self._count = len(elements)         # number of elements
-        assert self._count > 0, "Disjoin set (union find) ctor, number of element must be positive."
+        assert self._count > 0, "Disjoint set (union find) ctor, number of element must be positive."
         self._parents = [0] * self._count   # parent[i] = parent of i
         self._ranks = [0] * self._count     # rank[i] = rank of subtree rooted at i
         self._mapping = dict()              # element to index map
@@ -38,7 +38,7 @@ class DisjointSet(Base):
         r = self._mapping[element]   # get index
         while r != self._parents[r]: # locate root
             self._parents[r] = self._parents[self._parents[r]]  # path compression by halving, full path compression
-            r = self._parents[r]                                # is more involving another another loop from
+            r = self._parents[r]                                # is more involving another loop from
         return r                                                # the original element and up to the root
 
     def union(self, element1, element2):
