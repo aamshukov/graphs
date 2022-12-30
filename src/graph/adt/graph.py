@@ -3,7 +3,6 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph data type """
-import os
 from collections import defaultdict
 from graph.core.entity import Entity
 from graph.adt.edge import Edge
@@ -13,15 +12,36 @@ class Graph(Entity):
     """
     """
 
-    def __init__(self, id=0, digraph=False, version='1.0'):
+    def __init__(self,
+                 id=0,
+                 attributes=None,  # graph specific attributes
+                 digraph=False,
+                 version='1.0'):
         """
         """
         super().__init__(id, version)
-        self._root = None        # optional, used in some digraph algorithms
+        self._root = None  # optional, used in some digraph algorithms
         self._digraph = digraph  # directed or not
+        self._attributes = attributes
         self._vertices = dict()
         self._edges = dict()
-        self._vertex_edges_map = defaultdict(lambda: list())  # vertex-to-edges mapping
+
+    def __repr__(self):
+        """
+        """
+        return f"{type(self).__name__}:{self._digraph}:[{self._vertices}]:({self._edges})"
+
+    __str__ = __repr__
+
+    def __hash__(self):
+        """
+        """
+        raise NotImplemented
+
+    def __eq__(self, other):
+        """
+        """
+        raise NotImplemented
 
     @property
     def root(self):
@@ -42,6 +62,18 @@ class Graph(Entity):
         return self._digraph
 
     @property
+    def attributes(self):
+        """
+        """
+        return self._attributes
+
+    @attributes.setter
+    def attributes(self, attributes):
+        """
+        """
+        self._attributes = attributes
+
+    @property
     def vertices(self):
         """
         """
@@ -58,7 +90,6 @@ class Graph(Entity):
         """
         assert vertex is not None, "Invalid argument 'vertex'"
         assert vertex.id not in self.vertices, f"Vertex already exist: {vertex}"
-        vertex.adjacencies.clear()
         self._vertices[vertex.id] = vertex
 
     def remove_vertex(self, vertex):
@@ -66,18 +97,14 @@ class Graph(Entity):
         """
         assert vertex is not None, "Invalid argument 'vertex'"
         assert vertex.id in self.vertices, f"Missing vertex: {vertex}"
-        edges = self.get_edges(vertex)
-        for edge in edges:
-            self.remove_edge(edge)
-        del self._vertex_edges_map[vertex.id]
+        edges = self._edges.values()
+        for edge in list(edges):
+            vertex_u = edge.endpoints[0]
+            vertex_v = edge.endpoints[1]
+            if vertex_u.id == vertex.id or vertex_v.id == vertex.id:
+                self.remove_edge(edge)
+        assert len(vertex.adjacencies) == 0
         del self._vertices[vertex.id]
-
-    def get_edges(self, vertex):
-        """
-        """
-        assert vertex is not None, "Invalid argument 'vertex'"
-        assert vertex.id in self.vertices, f"Missing vertex: {vertex}"
-        return self._vertex_edges_map[vertex.id]
 
     def add_edge(self, vertex_u, vertex_v, edge_value=None):
         """
@@ -87,42 +114,26 @@ class Graph(Entity):
         assert vertex_v is not None, "Invalid argument 'vertex'"
         assert vertex_u.id in self.vertices, f"Missing vertex: {vertex_u}"
         assert vertex_v.id in self.vertices, f"Missing vertex: {vertex_v}"
-        # update vertices' adjacencies
-        vertex_u.adjacencies.append(vertex_v)   # add adjacent, U -> V
-        vertex_v.predecessors.append(vertex_u)  # add vertex_u as predecessor of vertex_v
-        vertex_v.add_ref()                      # mark V referenced by U
+        edge = Edge(len(self._edges) + 1, [vertex_u, vertex_v], edge_value, version=self._version)
+        vertex_u.add_adjacence(vertex_v, edge)  # add adjacent, U -> V
+        self._edges[edge.id] = edge
         if not self._digraph:
-            vertex_v.adjacencies.append(vertex_u)   # add adjacent, U <- V
-            vertex_u.predecessors.append(vertex_v)  # add vertex_v as predecessor of vertex_u
-            vertex_u.add_ref()                      # mark U referenced by V
-        # create edge
-        result = Edge(len(self._edges) + 1, edge_value, version=self._version)
-        result.endpoints[0] = vertex_u
-        result.endpoints[1] = vertex_v
-        self._edges[result.id] = result
-        # update vertex-to-edges mapping
-        self._vertex_edges_map[vertex_u.id].append(result)
-        if not self._digraph:
-            self._vertex_edges_map[vertex_v.id].append(result)
-        return result
+            edge = Edge(len(self._edges) + 1, [vertex_v, vertex_u], edge_value, version=self._version)
+            vertex_v.add_adjacence(vertex_u, edge)  # add adjacent, U <- V
+            self._edges[edge.id] = edge
 
     def remove_edge(self, edge):
         """
+        Remove edge, only U -> V case is considered because when populated
+        synthetic edges inserted in correct way:
+        U -> V and then U <- V.
         """
-        assert edge is not None, "Invalid argument 'edge'"
+        assert edge.id is not None, "Invalid argument 'edge'"
         vertex_u = edge.endpoints[0]
         vertex_v = edge.endpoints[1]
         assert vertex_u.id in self.vertices, f"Missing vertex: {vertex_u}"
         assert vertex_v.id in self.vertices, f"Missing vertex: {vertex_v}"
-        vertex_u.adjacencies.remove(vertex_v)             # break U -> V relation
-        vertex_v.predecessors.remove(vertex_u)            # remove vertex_u as predecessor of vertex_v
-        self._vertex_edges_map[vertex_u.id].remove(edge)  # clean up vertex_u-to-edges map
-        vertex_v.release()                                # decrement V ref counter
-        if not self._digraph:
-            vertex_v.adjacencies.remove(vertex_u)             # break U <- V relation
-            vertex_u.predecessors.remove(vertex_v)            # remove vertex_v as predecessor of vertex_u
-            self._vertex_edges_map[vertex_v.id].remove(edge)  # clean up vertex_v-to-edges map
-            vertex_u.release()                                # decrement U ref counter
+        vertex_u.remove_adjacence(vertex_v, edge)  # break U -> V relation
         del self._edges[edge.id]
 
     def validate(self):

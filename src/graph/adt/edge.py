@@ -13,23 +13,41 @@ class Edge(Entity):
 
     def __init__(self,
                  id,
-                 value=None,  # edge value, might be weight, etc.
-                 rank=2,      # usually has two vertices and more vertices in hyper-graphs
+                 endpoints,
+                 value=None,        # edge specific value, might be weight, etc.
+                 attributes=None,   # edge specific attributes
                  flags=Flags.CLEAR,
                  version='1.0'):
         """
         """
         super().__init__(id, version)
-        self._endpoints = [None] * rank
+        self._endpoints = [endpoint for endpoint in endpoints]
         self._value = value
+        self._attributes = attributes
         self._flags = flags
 
     def __repr__(self):
         """
         """
-        return f"{self._value}:{self._flags}:({self._endpoints})"
+        return f"{type(self).__name__}:{self._id}:{self._value}:{self._flags}:[{self._attributes}]:({self._endpoints})"
 
     __str__ = __repr__
+
+    def __hash__(self):
+        """
+        """
+        result = super().__hash__()
+        result ^= hash(tuple(self._endpoints))
+        result ^= hash(tuple(self._value))
+        return result
+
+    def __eq__(self, other):
+        """
+        """
+        result = (super().__eq__(other) and
+                  tuple(self._endpoints) == tuple(other.endpoints) and
+                  tuple(self._value) == tuple(other.value))
+        return result
 
     @property
     def endpoints(self):
@@ -48,6 +66,18 @@ class Edge(Entity):
         """
         """
         self._value = value
+
+    @property
+    def attributes(self):
+        """
+        """
+        return self._attributes
+
+    @attributes.setter
+    def attributes(self, attributes):
+        """
+        """
+        self._attributes = attributes
 
     @property
     def flags(self):

@@ -10,12 +10,13 @@ import unittest
 from graph.core.flags import Flags
 from graph.core.logger import Logger
 from graph.core.text import Text
+from graph.adt.disjoint_set import DisjointSet
 from graph.core.value import Value
 from graph.core.entity import Entity
 from graph.adt.vertex import Vertex
 from graph.adt.edge import Edge
 from graph.adt.graph import Graph
-from graph.adt.disjoint_set import DisjointSet
+from graph.algorithms.graph_algorithms import GraphAlgorithms
 
 
 class Person(Entity):
@@ -25,6 +26,22 @@ class Person(Entity):
         self._age = age
         self._manager = manager
         self._address = address
+
+    def __hash__(self):
+        result = super().__hash__()
+        result ^= hash(self._name)
+        result ^= hash(self._age)
+        result ^= hash(self._manager)
+        result ^= hash(self._address)
+        return result
+
+    def __eq__(self, other):
+        result = (super().__eq__(other) and
+                  Text.equal(self._name, other.name) and
+                  self._age == other.age and
+                  self._manager == other.manager and
+                  self._address == other.address)
+        return result
 
     @property
     def name(self):
@@ -54,6 +71,18 @@ class Address(Value):
         self._street = street
         self._city = city
 
+    def __hash__(self):
+        result = super().__hash__()
+        result ^= hash(self._street)
+        result ^= hash(self._city)
+        return result
+
+    def __eq__(self, other):
+        result = (super().__eq__(other) and
+                  Text.equal(self._street, other.street) and
+                  Text.equal(self._city, other.city))
+        return result
+
     @property
     def street(self):
         return self._street
@@ -73,9 +102,9 @@ class Test(unittest.TestCase):
         """
         import networkx as nx
         if graph.digraph:
-            result = nx.DiGraph()
+            result = nx.MultiDiGraph()
         else:
-            result = nx.Graph()
+            result = nx.MultiGraph()
         for vertex in graph.vertices.values():
             result.add_node(vertex.label)
         for edge in graph.edges.values():
@@ -92,6 +121,24 @@ class Test(unittest.TestCase):
         nx_graph = Test.build_networkx_graph(graph)
         nx.draw_networkx(nx_graph)
         plt.show()
+
+    @staticmethod
+    def generate_random_graph(n=3, digraph=False):
+        import numpy as np
+        import networkx as nx
+        p = np.random.rand(n, n)  # your "matrix of probabilities"
+        adjacency = np.random.rand(*p.shape) <= p  # adjacency[ii, jj] is True with probability P[ii, jj]
+        nx_graph = nx.from_numpy_matrix(adjacency, nx.DiGraph if digraph else nx.Graph)
+        result = Graph(digraph)
+        vertices = dict()
+        for vertex in nx_graph.nodes:
+            v = Vertex(vertex, str(vertex), vertex)
+            vertices[vertex] = v
+            result.add_vertex(v)
+        for edge in nx_graph.edges:
+            u, v = edge
+            result.add_edge(vertices[u], vertices[v])
+        return result
 
     def test_logger_success(self):
         path = r'd:\tmp'
@@ -219,6 +266,344 @@ class Test(unittest.TestCase):
                 el1, el2 = line.split()
                 djs.union(int(el1), int(el2))
         assert djs.count == 6
+
+    def test_graph_0_success(self):
+        graph = Graph(digraph=False)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_1_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        graph.add_vertex(v1)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v1)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_2_no_edges_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        assert len(graph.vertices) == 2
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v1)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v2)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_2_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_edge(v1, v2, 'v1-v2')
+        assert len(graph.vertices) == 2
+        assert len(graph.edges) == 2
+        # Test.show_graph(graph)
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        graph.remove_vertex(v1)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v2)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_3_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_edge(v1, v2, 'v1-v2')
+        graph.add_edge(v2, v3, 'v2-v3')
+        graph.add_edge(v3, v1, 'v3-v1')
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 3
+        assert len(graph.edges) == 6
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 2
+        assert len(successors) == 2
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 2
+        assert len(successors) == 2
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 2
+        assert len(successors) == 2
+        graph.remove_vertex(v1)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 2
+        assert len(graph.edges) == 2
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        graph.remove_vertex(v2)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v3)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_3_complex_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_edge(v1, v1, 'v1-v1-0')
+        graph.add_edge(v1, v1, 'v1-v1-1')
+        graph.add_edge(v1, v2, 'v1-v2-2')
+        graph.add_edge(v1, v2, 'v1-v2-3')
+        graph.add_edge(v1, v3, 'v1-v3-6')
+        graph.add_edge(v2, v2, 'v2-v2-4')
+        graph.add_edge(v2, v2, 'v2-v2-5')
+        graph.add_edge(v2, v1, 'v2-v1-2')
+        graph.add_edge(v2, v1, 'v2-v1-3')
+        graph.add_edge(v2, v3, 'v2-v3-7')
+        graph.add_edge(v3, v3, 'v3-v3-8')
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 3
+        assert len(graph.edges) == 22
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 9
+        assert len(successors) == 9
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 9
+        assert len(successors) == 9
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 4
+        assert len(successors) == 4
+        graph.remove_vertex(v3)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 2
+        assert len(graph.edges) == 16
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 8
+        assert len(successors) == 8
+        graph.remove_vertex(v2)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 4
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 4
+        assert len(successors) == 4
+        graph.remove_vertex(v1)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_5_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        v6 = Vertex(6, '6', 6)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_vertex(v6)
+        graph.add_edge(v1, v2, 'v1-v2')
+        graph.add_edge(v1, v4, 'v1-v4')
+        graph.add_edge(v1, v5, 'v1-v5')
+        graph.add_edge(v2, v3, 'v2-v3')
+        graph.add_edge(v2, v4, 'v2-v4')
+        graph.add_edge(v3, v3, 'v3-v3')
+        graph.add_edge(v4, v2, 'v4-v2')
+        graph.add_edge(v4, v3, 'v4-v3')
+        graph.add_edge(v6, v2, 'v6-v2')
+        graph.add_edge(v6, v3, 'v6-v3')
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 6
+        assert len(graph.edges) == 20
+        predecessors = GraphAlgorithms.collect_predecessors(v1, graph)
+        successors = GraphAlgorithms.collect_successors(v1, graph)
+        assert len(predecessors) == 3
+        assert len(successors) == 3
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 5
+        assert len(successors) == 5
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 5
+        assert len(successors) == 5
+        predecessors = GraphAlgorithms.collect_predecessors(v4, graph)
+        successors = GraphAlgorithms.collect_successors(v4, graph)
+        assert len(predecessors) == 4
+        assert len(successors) == 4
+        predecessors = GraphAlgorithms.collect_predecessors(v5, graph)
+        successors = GraphAlgorithms.collect_successors(v5, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 2
+        assert len(successors) == 2
+        graph.remove_vertex(v1)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 5
+        assert len(graph.edges) == 14
+        predecessors = GraphAlgorithms.collect_predecessors(v2, graph)
+        successors = GraphAlgorithms.collect_successors(v2, graph)
+        assert len(predecessors) == 4
+        assert len(successors) == 4
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 5
+        assert len(successors) == 5
+        predecessors = GraphAlgorithms.collect_predecessors(v4, graph)
+        successors = GraphAlgorithms.collect_successors(v4, graph)
+        assert len(predecessors) == 3
+        assert len(successors) == 3
+        predecessors = GraphAlgorithms.collect_predecessors(v5, graph)
+        successors = GraphAlgorithms.collect_successors(v5, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 2
+        assert len(successors) == 2
+        graph.remove_vertex(v2)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 4
+        assert len(graph.edges) == 6
+        predecessors = GraphAlgorithms.collect_predecessors(v3, graph)
+        successors = GraphAlgorithms.collect_successors(v3, graph)
+        assert len(predecessors) == 4
+        assert len(successors) == 4
+        predecessors = GraphAlgorithms.collect_predecessors(v4, graph)
+        successors = GraphAlgorithms.collect_successors(v4, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        predecessors = GraphAlgorithms.collect_predecessors(v5, graph)
+        successors = GraphAlgorithms.collect_successors(v5, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 1
+        assert len(successors) == 1
+        graph.remove_vertex(v3)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 3
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v4, graph)
+        successors = GraphAlgorithms.collect_successors(v4, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v5, graph)
+        successors = GraphAlgorithms.collect_successors(v5, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v4)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 2
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v5, graph)
+        successors = GraphAlgorithms.collect_successors(v5, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v5)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 1
+        assert len(graph.edges) == 0
+        predecessors = GraphAlgorithms.collect_predecessors(v6, graph)
+        successors = GraphAlgorithms.collect_successors(v6, graph)
+        assert len(predecessors) == 0
+        assert len(successors) == 0
+        graph.remove_vertex(v6)
+        # Test.show_graph(graph)
+        assert len(graph.vertices) == 0
+        assert len(graph.edges) == 0
+
+    def test_graph_success(self):
+        n = 100
+        for _ in range(1):
+            graph = Test.generate_random_graph(n)
+            vertices = list(graph.vertices.values())
+            while vertices:
+                vertex = random.choice(vertices)
+                graph.remove_vertex(vertex)
+                vertices.remove(vertex)
+            assert len(graph.vertices) == 0
+            assert len(graph.edges) == 0
+
+    def test_digraph_1_success(self):
+        pass
+
+    def test_digraph_2_success(self):
+        pass
+
+    def test_digraph_3_success(self):
+        pass
+
+    def test_digraph_5_success(self):
+        pass
+
+    def test_digraph_success(self):
+        pass
 
 
 if __name__ == '__main__':

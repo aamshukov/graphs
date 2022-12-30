@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph algorithms """
+from graph.core.domainhelper import DomainHelper
 from graph.core.base import Base
 from graph.adt.vertex import Vertex
 from graph.adt.edge import Edge
@@ -18,7 +19,13 @@ class GraphAlgorithms(Base):
         """
         assert vertex is not None, "Invalid argument 'vertex'"
         assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
-        result = [predecessor for predecessor in graph.get_vertex_predecessors(vertex)]
+        result = list()
+        edges = graph.edges.values()
+        for edge in edges:
+            vertex_u = edge.endpoints[0]
+            vertex_v = edge.endpoints[1]
+            if vertex_v.id == vertex.id:
+                result.append(DomainHelper.AdjValue(vertex_u, edge))
         return result
 
     @staticmethod
@@ -27,5 +34,5 @@ class GraphAlgorithms(Base):
         """
         assert vertex is not None, "Invalid argument 'vertex'"
         assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
-        result = [adjacent for adjacent in vertex.adjacencies]
+        result = [adjacence for adjacence in vertex.adjacencies]
         return result

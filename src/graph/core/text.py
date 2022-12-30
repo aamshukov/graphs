@@ -8,8 +8,6 @@ from unicodedata import normalize
 from graph.core.base import Base
 
 
-"""
-"""
 class Text(Base):
     """
     """

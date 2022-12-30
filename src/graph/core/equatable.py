@@ -5,6 +5,7 @@
 """ Equatable interface """
 import itertools
 import inspect
+from abc import abstractmethod
 from graph.core.base import Base
 from graph.core.domainhelper import DomainHelper
 
@@ -13,48 +14,52 @@ class Equatable(Base):
     """
     """
 
+    @abstractmethod
     def __hash__(self):
-        components = Equatable.collect_equality_components(self)
-        result = 0
-        for component in components:
-            result ^= hash(component)
+        """
+        """
+        result = hash(0)
+        # components = Equatable.collect_equality_components(self)
+        # for component in components:
+        #     result ^= hash(component)
         return result
 
+    @abstractmethod
     def __eq__(self, other):
         """
         """
-        result = self is other
-        if not result:
-            result = isinstance(other, Equatable)
-            if result:
-                lhs = Equatable.collect_equality_components(self)
-                rhs = Equatable.collect_equality_components(other)
-                result = len(lhs) == len(rhs)
-                if result:
-                    for lhs_item, rhs_item in zip(lhs, rhs):
-                        if lhs_item != rhs_item:
-                            result = False
-                            break
+        result = True
+        # if not result:
+        #     pass
+        #     # result = isinstance(other, Equatable)
+        #     # if result:
+        #     #     lhs = Equatable.collect_equality_components(self)
+        #     #     rhs = Equatable.collect_equality_components(other)
+        #     #     result = len(lhs) == len(rhs)
+        #     #     if result:
+        #     #         for lhs_item, rhs_item in zip(lhs, rhs):
+        #     #             if lhs_item != rhs_item:
+        #     #                 result = False
+        #     #                 break
         return result
 
-
     @staticmethod
-    def collect_equality_components(object):
+    def collect_equality_components(obj):
         """
         """
         result = list()
         attributes = list()
-        for attribute in itertools.chain(DomainHelper.collect_dicts(object),
-                                         DomainHelper.collect_slots(object)):
+        for attribute in itertools.chain(DomainHelper.collect_dicts(obj),
+                                         DomainHelper.collect_slots(obj)):
             attributes.append(attribute)
-        properties = [property for property in attributes if not property.startswith('_')]
-        for property in properties:
-            property_value = getattr(object, property, None)
-            if (property_value and
-                not inspect.isfunction(property_value) and
-                not inspect.ismethod(property_value)):
-                if inspect.isclass(type(property_value)) and issubclass(property_value.__class__, Equatable):
-                    result.extend(Equatable.collect_equality_components(property_value))
+        props = [prop for prop in attributes if not prop.startswith('_')]
+        for prop in props:
+            prop_value = getattr(obj, prop, None)
+            if (prop_value and
+                not inspect.isfunction(prop_value) and
+                    not inspect.ismethod(prop_value)):
+                if inspect.isclass(type(prop_value)) and issubclass(prop_value.__class__, Equatable):
+                    result.extend(Equatable.collect_equality_components(prop_value))
                 else:
-                    result.append(property_value)
+                    result.append(prop_value)
         return result

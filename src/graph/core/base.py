@@ -5,7 +5,5 @@
 from abc import ABCMeta
 
 
-"""
-"""
 class Base(metaclass=ABCMeta):
     pass

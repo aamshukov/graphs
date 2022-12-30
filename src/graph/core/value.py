@@ -4,6 +4,7 @@
 #
 """ Value type """
 from abc import abstractmethod
+from graph.core.text import Text
 from graph.core.equatable import Equatable
 
 
@@ -16,6 +17,20 @@ class Value(Equatable):
         """
         super().__init__()
         self._version = version.strip()
+
+    @abstractmethod
+    def __hash__(self):
+        """
+        """
+        result = super().__hash__() ^ hash(self._version)
+        return result
+
+    @abstractmethod
+    def __eq__(self, other):
+        """
+        """
+        result = super().__eq__(other) and Text.equal(self._version, other.version)
+        return result
 
     @property
     def version(self):

@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Entity type """
+from abc import abstractmethod
 from graph.core.value import Value
 
 
@@ -15,6 +16,20 @@ class Entity(Value):
         """
         super().__init__(version)
         self._id = id
+
+    @abstractmethod
+    def __hash__(self):
+        """
+        """
+        result = super().__hash__() ^ hash(self._id)
+        return result
+
+    @abstractmethod
+    def __eq__(self, other):
+        """
+        """
+        result = super().__eq__(other) and self._id == other.id
+        return result
 
     @property
     def id(self):

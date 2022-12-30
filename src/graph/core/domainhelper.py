@@ -3,14 +3,15 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Domain helper """
+from collections import namedtuple
 from graph.core.base import Base
 
 
-"""
-"""
 class DomainHelper(Base):
     """
     """
+
+    AdjValue = namedtuple('AdjValue', 'vertex edge')
 
     @staticmethod
     def collect_slots(object):

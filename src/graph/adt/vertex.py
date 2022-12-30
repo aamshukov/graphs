@@ -1,12 +1,13 @@
-﻿#! /usr/bin/env python3
-# -*- encoding: utf-8 -*-
+﻿# -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
 """ Vertex """
 from graph.core.flags import Flags
 from graph.core.colors import Colors
-from graph.patterns.visitable import Visitable
+from graph.core.text import Text
+from graph.core.domainhelper import DomainHelper
 from graph.core.entity import Entity
+from graph.patterns.visitable import Visitable
 
 
 class Vertex(Entity, Visitable):
@@ -16,7 +17,8 @@ class Vertex(Entity, Visitable):
     def __init__(self,
                  id,
                  label='',
-                 value=None,  # vertex value
+                 value=None,        # vertex specific value
+                 attributes=None,   # vertex specific attributes
                  flags=Flags.CLEAR,
                  color=Colors.UNKNOWN,
                  version='1.0'):
@@ -25,18 +27,36 @@ class Vertex(Entity, Visitable):
         super().__init__(id, version)
         self._label = label
         self._value = value
+        self._attributes = attributes
         self._flags = flags
         self._color = color
-        self._ref_count = 0
-        self._adjacencies = list()
-        self._predecessors = list()
+        self._adjacencies = list()  # list of Vn/Em pairs (AdjValue)
 
     def __repr__(self):
         """
         """
-        return f"{self._label}:{self._value}:{self._flags}:{self._color}:{self._ref_count}:[{self._adjacencies}]"
+        return f"{type(self).__name__}:{self._id}:{self._label}:{self._value}:[{self._attributes}]:" \
+               f"{self._flags}:{self._color}:[{self._adjacencies}]]"
 
     __str__ = __repr__
+
+    def __hash__(self):
+        """
+        """
+        result = super().__hash__()
+        result ^= hash(self._label)
+        result ^= hash(tuple(self._value))
+        result ^= hash(tuple(self._adjacencies))
+        return result
+
+    def __eq__(self, other):
+        """
+        """
+        result = (super().__eq__(other) and
+                  Text.equal(self._label, other.label) and
+                  tuple(self._value) == tuple(other.value) and
+                  tuple(self._adjacencies) == tuple(other.adjacencies))
+        return result
 
     @property
     def label(self):
@@ -61,6 +81,18 @@ class Vertex(Entity, Visitable):
         """
         """
         self._value = value
+
+    @property
+    def attributes(self):
+        """
+        """
+        return self._attributes
+
+    @attributes.setter
+    def attributes(self, attributes):
+        """
+        """
+        self._attributes = attributes
 
     @property
     def flags(self):
@@ -90,33 +122,17 @@ class Vertex(Entity, Visitable):
     def adjacencies(self):
         """
         """
-        return self._adjacencies
+        return tuple(self._adjacencies)
 
-    @property
-    def predecessors(self):
+    def add_adjacence(self, vertex, edge):
         """
         """
-        return self._predecessors
+        self._adjacencies.append(DomainHelper.AdjValue(vertex, edge))
 
-    @property
-    def ref_count(self):
+    def remove_adjacence(self, vertex, edge):
         """
         """
-        return self._ref_count
-
-    def add_ref(self):
-        """
-        """
-        return ++self._ref_count
-
-    def release(self):
-        """
-        """
-        if self._ref_count > 0:
-            self._ref_count -= 1
-        else:
-            raise Exception("Vertex release ref count error.")
-        return self._ref_count
+        self._adjacencies.remove(DomainHelper.AdjValue(vertex, edge))
 
     def validate(self):
         """
