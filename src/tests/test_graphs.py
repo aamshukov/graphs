@@ -1218,6 +1218,60 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
+    def test_digraph_bfs_abcdef_success(self):
+        graph = Graph(digraph=True)
+        v_a = Vertex(0, 'A', 'A')
+        v_b = Vertex(1, 'B', 'B')
+        v_c = Vertex(2, 'C', 'C')
+        v_d = Vertex(3, 'D', 'D')
+        v_e = Vertex(4, 'E', 'E')
+        v_f = Vertex(5, 'F', 'F')
+        graph.add_vertex(v_a)
+        graph.add_vertex(v_b)
+        graph.add_vertex(v_c)
+        graph.add_vertex(v_d)
+        graph.add_vertex(v_e)
+        graph.add_vertex(v_f)
+        graph.add_edge(v_a, v_b, 'A->B')
+        graph.add_edge(v_a, v_c, 'A->C')
+        graph.add_edge(v_a, v_d, 'A->D')
+        graph.add_edge(v_c, v_e, 'C->E')
+        graph.add_edge(v_d, v_f, 'D->F')
+        Test.show_graph(graph)
+        collected_vertices = list()
+        for vertex in graph.vertices.values():
+            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
+                for v in GraphAlgorithms.bfs(v_a):
+                    collected_vertices.append(v)
+        assert collected_vertices == [v_a, v_b, v_c, v_d, v_e, v_f]
+
+    def test_digraph_dfs_abcdef_success(self):
+        graph = Graph(digraph=True)
+        v_a = Vertex(0, 'A', 'A')
+        v_b = Vertex(1, 'B', 'B')
+        v_c = Vertex(2, 'C', 'C')
+        v_d = Vertex(3, 'D', 'D')
+        v_e = Vertex(4, 'E', 'E')
+        v_f = Vertex(5, 'F', 'F')
+        graph.add_vertex(v_a)
+        graph.add_vertex(v_b)
+        graph.add_vertex(v_c)
+        graph.add_vertex(v_d)
+        graph.add_vertex(v_e)
+        graph.add_vertex(v_f)
+        graph.add_edge(v_a, v_b, 'A->B')
+        graph.add_edge(v_a, v_c, 'A->C')
+        graph.add_edge(v_a, v_d, 'A->D')
+        graph.add_edge(v_c, v_e, 'C->E')
+        graph.add_edge(v_d, v_f, 'D->F')
+        # Test.show_graph(graph)
+        collected_vertices = list()
+        for vertex in graph.vertices.values():
+            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
+                for v in GraphAlgorithms.dfs(v_a):
+                    collected_vertices.append(v)
+        assert collected_vertices == [v_a, v_d, v_f, v_c, v_e, v_b]
+
 
 if __name__ == '__main__':
     """
