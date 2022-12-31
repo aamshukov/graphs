@@ -3,10 +3,10 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph algorithms """
+from collections import deque
+from graph.core.flags import Flags
 from graph.core.domainhelper import DomainHelper
 from graph.core.base import Base
-from graph.adt.vertex import Vertex
-from graph.adt.edge import Edge
 
 
 class GraphAlgorithms(Base):
@@ -36,3 +36,19 @@ class GraphAlgorithms(Base):
         assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
         result = [adjacence for adjacence in vertex.adjacencies]
         return result
+
+    @staticmethod
+    def dfs(vertex, *args, **kwargs):
+        """
+        """
+        stack = deque()
+        stack.append(vertex)  # push
+        while stack:
+            vertex = stack.pop()
+            if (vertex.flags & Flags.VISITED) == Flags.VISITED:
+                continue
+            vertex.flags = Flags.modify_flags(vertex.flags, Flags.VISITED, Flags.CLEAR)
+            yield vertex
+            for adjacence in vertex.adjacencies:
+                if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
+                    stack.append(adjacence.vertex)  # push

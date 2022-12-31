@@ -103,3 +103,16 @@ if any((x, y, z)):
 [('d', 1), ('c', 2), ('b', 3), ('a', 4)]
 
 
+
+
+        collected_vertices = list()
+        dfs_visitor = DfsVisitor(graph)
+        for vertex in graph.vertices.values():
+            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
+                v = dfs_visitor.visit(vertex, callback=lambda v: collected_vertices.append(v))
+                collected_vertices.append(next(v))
+        assert collected_vertices == [v1, v2, v3]
+
+
+
+

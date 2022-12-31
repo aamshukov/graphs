@@ -3,7 +3,6 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph data type """
-from collections import defaultdict
 from graph.core.entity import Entity
 from graph.adt.edge import Edge
 

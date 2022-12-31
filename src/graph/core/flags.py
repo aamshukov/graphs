@@ -9,19 +9,19 @@ from enum import Flag, auto
 class Flags(Flag):
     """
     """
-    CLEAR     = auto()
-    DIRTY     = auto()
+    CLEAR = auto()
+    DIRTY = auto()
     PROCESSED = auto()
-    VISITED   = auto()
-    MARKED    = auto()
-    DELETED   = auto()
-    GENUINE   = auto()
+    VISITED = auto()
+    MARKED = auto()
+    DELETED = auto()
+    GENUINE = auto()
     SYNTHETIC = auto()
-    LEAF      = auto()
-    OVERFLOW  = auto()
+    LEAF = auto()
+    OVERFLOW = auto()
     UNDERFLOW = auto()
-    INVALID   = auto()
+    INVALID = auto()
 
     @staticmethod
     def modify_flags(flags, add, remove):
-        return ((flags & ~remove) | add);
+        return (flags & ~remove) | add;
