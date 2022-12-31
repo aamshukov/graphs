@@ -7,7 +7,7 @@ from graph.core.flags import Flags
 from graph.patterns.visitor import Visitor
 
 
-class DfsVisitor(Visitor):
+class GraphVisitor(Visitor):
     """
     """
 

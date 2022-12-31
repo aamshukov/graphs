@@ -3,7 +3,6 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph algorithms """
-from collections import deque
 from graph.core.flags import Flags
 from graph.core.domainhelper import DomainHelper
 from graph.core.base import Base
@@ -41,7 +40,7 @@ class GraphAlgorithms(Base):
     def dfs(vertex, *args, **kwargs):
         """
         """
-        stack = deque()
+        stack = list()
         stack.append(vertex)  # push
         while stack:
             vertex = stack.pop()
@@ -52,3 +51,19 @@ class GraphAlgorithms(Base):
             for adjacence in vertex.adjacencies:
                 if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
                     stack.append(adjacence.vertex)  # push
+
+    @staticmethod
+    def bfs(vertex, *args, **kwargs):
+        """
+        """
+        queue = list()
+        queue.append(vertex)  # enqueue
+        while queue:
+            vertex = queue.pop(0)  # deque
+            if (vertex.flags & Flags.VISITED) == Flags.VISITED:
+                continue
+            vertex.flags = Flags.modify_flags(vertex.flags, Flags.VISITED, Flags.CLEAR)
+            yield vertex
+            for adjacence in vertex.adjacencies:
+                if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
+                    queue.append(adjacence.vertex)  # enqueue
