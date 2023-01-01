@@ -45,8 +45,6 @@ class Vertex(Entity, Visitable):
         """
         result = super().__hash__()
         result ^= hash(self._label)
-        result ^= hash(tuple(self._value))
-        result ^= hash(tuple(self._adjacencies))
         return result
 
     def __eq__(self, other):
@@ -142,4 +140,9 @@ class Vertex(Entity, Visitable):
     def accept(self, visitor, *args, **kwargs):
         """
         """
-        visitor.visit(self, *args, **kwargs)
+        if (self._flags & Flags.VISITED) != Flags.VISITED:
+            self._flags = Flags.modify_flags(self._flags, Flags.VISITED, Flags.CLEAR)
+            visitor.visit(self, *args, **kwargs)
+            for adjacence in self._adjacencies:
+                if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
+                    adjacence.vertex.accept(visitor, *args, **kwargs)

@@ -25,7 +25,7 @@ class GraphAlgorithms(Base):
             vertex_v = edge.endpoints[1]
             if vertex_v.id == vertex.id:
                 result.append(DomainHelper.AdjValue(vertex_u, edge))
-        return result
+        return set(result)
 
     @staticmethod
     def collect_successors(vertex, graph):
@@ -34,7 +34,24 @@ class GraphAlgorithms(Base):
         assert vertex is not None, "Invalid argument 'vertex'"
         assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
         result = [adjacence for adjacence in vertex.adjacencies]
-        return result
+        return set(result)
+
+    @staticmethod
+    def collect_incidents(vertex, graph):
+        """
+        """
+        assert vertex is not None, "Invalid argument 'vertex'"
+        assert vertex.id in graph.vertices, f"Missing vertex: {vertex}"
+        result = list()
+        edges = graph.edges.values()
+        for edge in edges:
+            vertex_u = edge.endpoints[0]
+            vertex_v = edge.endpoints[1]
+            if vertex_u.id == vertex.id:
+                result.append(DomainHelper.AdjValue(vertex_u, edge))
+            if vertex_v.id == vertex.id:
+                result.append(DomainHelper.AdjValue(vertex_v, edge))
+        return set(result)
 
     @staticmethod
     def dfs(vertex, *args, **kwargs):

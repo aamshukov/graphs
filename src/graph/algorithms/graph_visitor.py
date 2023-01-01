@@ -3,7 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Depth First Search () DFS visitor"""
-from graph.core.flags import Flags
+from abc import abstractmethod
 from graph.patterns.visitor import Visitor
 
 
@@ -21,13 +21,8 @@ class GraphVisitor(Visitor):
 
     __str__ = __repr__
 
+    @abstractmethod
     def visit(self, vertex, *args, **kwargs):
         """
         """
-        if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-            vertex.flags = Flags.modify_flags(vertex.flags, Flags.VISITED, Flags.CLEAR)
-            vertex.accept(self, *args, **kwargs)
-            yield vertex
-            for adjacence in vertex.adjacencies:
-                if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    adjacence.vertex.accept(self, *args, **kwargs)
+        pass

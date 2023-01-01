@@ -135,3 +135,13 @@ def greeting(userid):
 
 
 
+
+
+            for vertex in graph.vertices.values():
+                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
+                    for v in GraphAlgorithms.dfs(vertex):
+                        collected_vertices.append(v)
+            assert len(collected_vertices) == len(vertices)
+
+
+

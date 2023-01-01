@@ -927,6 +927,23 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
+    class CollectNodesVisitor(GraphVisitor):
+
+        def __init__(self, graph):
+            """
+            """
+            super().__init__(graph)
+            self._collected_vertices = list()
+
+        @property
+        def collected_vertices(self):
+            return self._collected_vertices
+
+        def visit(self, vertex, *args, **kwargs):
+            """
+            """
+            self._collected_vertices.append(vertex)
+
     def test_graph_dfs_3_complex_visitor_success(self):
         graph = Graph(digraph=False)
         v1 = Vertex(1, '1', 1)
@@ -947,13 +964,10 @@ class Test(unittest.TestCase):
         graph.add_edge(v2, v3, 'v2-v3-7')
         graph.add_edge(v3, v3, 'v3-v3-8')
         # Test.show_graph(graph)
-        collected_vertices = list()
-        dfs_visitor = GraphVisitor(graph)
+        visitor = Test.CollectNodesVisitor(graph)
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in dfs_visitor.visit(vertex):
-                    collected_vertices.append(v)
-        assert collected_vertices == [v1, v2, v3]
+            vertex.accept(visitor)
+        assert visitor.collected_vertices == [v1, v2, v3]
 
     def test_graph_dfs_visitor_success(self):
         from datetime import datetime
@@ -968,13 +982,10 @@ class Test(unittest.TestCase):
             vertices = list(graph.vertices.values())
             print(f"Vertices collected ... {len(graph.vertices)}")
             print(f"Edges collected ... {len(graph.edges)}")
-            collected_vertices = list()
-            dfs_visitor = GraphVisitor(graph)
+            visitor = Test.CollectNodesVisitor(graph)
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in dfs_visitor.visit(vertex):
-                        collected_vertices.append(v)
-            assert len(collected_vertices) == len(vertices)
+                vertex.accept(visitor)
+            assert len(visitor.collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
 
@@ -999,9 +1010,8 @@ class Test(unittest.TestCase):
         graph.add_edge(v3, v3, 'v3-v3-8')
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.dfs(vertex):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.dfs(vertex):
+                collected_vertices.append(v)
         assert collected_vertices == [v1, v2, v3]
 
     def test_graph_dfs_success(self):
@@ -1009,7 +1019,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
-        for k in range(1):
+        for k in range(10):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
             graph = Test.generate_random_graph(n, digraph=False)
@@ -1019,9 +1029,8 @@ class Test(unittest.TestCase):
             print(f"Edges collected ... {len(graph.edges)}")
             collected_vertices = list()
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in GraphAlgorithms.dfs(vertex):
-                        collected_vertices.append(v)
+                for v in GraphAlgorithms.dfs(vertex):
+                    collected_vertices.append(v)
             assert len(collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
@@ -1046,13 +1055,10 @@ class Test(unittest.TestCase):
         graph.add_edge(v2, v3, 'v2-v3-7')
         graph.add_edge(v3, v3, 'v3-v3-8')
         # Test.show_graph(graph)
-        collected_vertices = list()
-        dfs_visitor = GraphVisitor(graph)
+        visitor = Test.CollectNodesVisitor(graph)
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in dfs_visitor.visit(vertex):
-                    collected_vertices.append(v)
-        assert collected_vertices == [v1, v2, v3]
+            vertex.accept(visitor)
+        assert visitor.collected_vertices == [v1, v2, v3]
 
     def test_digraph_dfs_visitor_success(self):
         from datetime import datetime
@@ -1067,13 +1073,10 @@ class Test(unittest.TestCase):
             vertices = list(graph.vertices.values())
             print(f"Vertices collected ... {len(graph.vertices)}")
             print(f"Edges collected ... {len(graph.edges)}")
-            collected_vertices = list()
-            dfs_visitor = GraphVisitor(graph)
+            visitor = Test.CollectNodesVisitor(graph)
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in dfs_visitor.visit(vertex):
-                        collected_vertices.append(v)
-            assert len(collected_vertices) == len(vertices)
+                vertex.accept(visitor)
+            assert len(visitor.collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
 
@@ -1099,9 +1102,8 @@ class Test(unittest.TestCase):
         # Test.show_graph(graph)
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.dfs(vertex):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.dfs(vertex):
+                collected_vertices.append(v)
         assert collected_vertices == [v1, v3, v2]
 
     def test_digraph_dfs_success(self):
@@ -1109,7 +1111,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
-        for k in range(1):
+        for k in range(10):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
             graph = Test.generate_random_graph(n, digraph=True)
@@ -1119,9 +1121,8 @@ class Test(unittest.TestCase):
             print(f"Edges collected ... {len(graph.edges)}")
             collected_vertices = list()
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in GraphAlgorithms.dfs(vertex):
-                        collected_vertices.append(v)
+                for v in GraphAlgorithms.dfs(vertex):
+                    collected_vertices.append(v)
             assert len(collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
@@ -1145,9 +1146,8 @@ class Test(unittest.TestCase):
         # Test.show_graph(graph)
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.bfs(v2):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.bfs(v2):
+                collected_vertices.append(v)
         assert collected_vertices == [v2, v0, v1, v3]
 
     def test_digraph_bfs_4_success(self):
@@ -1169,9 +1169,8 @@ class Test(unittest.TestCase):
         # Test.show_graph(graph)
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.bfs(v2):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.bfs(v2):
+                collected_vertices.append(v)
         assert collected_vertices == [v2, v0, v3, v1]  # 2, 0, 3, 1
 
     def test_graph_bfs_success(self):
@@ -1179,7 +1178,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
-        for k in range(1):
+        for k in range(10):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
             graph = Test.generate_random_graph(n, digraph=False)
@@ -1189,9 +1188,8 @@ class Test(unittest.TestCase):
             print(f"Edges collected ... {len(graph.edges)}")
             collected_vertices = list()
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in GraphAlgorithms.dfs(vertex):
-                        collected_vertices.append(v)
+                for v in GraphAlgorithms.dfs(vertex):
+                    collected_vertices.append(v)
             assert len(collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
@@ -1201,7 +1199,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
-        for k in range(1):
+        for k in range(10):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
             graph = Test.generate_random_graph(n, digraph=True)
@@ -1211,9 +1209,8 @@ class Test(unittest.TestCase):
             print(f"Edges collected ... {len(graph.edges)}")
             collected_vertices = list()
             for vertex in graph.vertices.values():
-                if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                    for v in GraphAlgorithms.dfs(vertex):
-                        collected_vertices.append(v)
+                for v in GraphAlgorithms.dfs(vertex):
+                    collected_vertices.append(v)
             assert len(collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
@@ -1237,12 +1234,11 @@ class Test(unittest.TestCase):
         graph.add_edge(v_a, v_d, 'A->D')
         graph.add_edge(v_c, v_e, 'C->E')
         graph.add_edge(v_d, v_f, 'D->F')
-        Test.show_graph(graph)
+        # Test.show_graph(graph)
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.bfs(v_a):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.bfs(v_a):
+                collected_vertices.append(v)
         assert collected_vertices == [v_a, v_b, v_c, v_d, v_e, v_f]
 
     def test_digraph_dfs_abcdef_success(self):
@@ -1267,9 +1263,8 @@ class Test(unittest.TestCase):
         # Test.show_graph(graph)
         collected_vertices = list()
         for vertex in graph.vertices.values():
-            if (vertex.flags & Flags.VISITED) != Flags.VISITED:
-                for v in GraphAlgorithms.dfs(v_a):
-                    collected_vertices.append(v)
+            for v in GraphAlgorithms.dfs(v_a):
+                collected_vertices.append(v)
         assert collected_vertices == [v_a, v_d, v_f, v_c, v_e, v_b]
 
 

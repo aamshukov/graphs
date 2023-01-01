@@ -37,8 +37,6 @@ class Edge(Entity):
         """
         """
         result = super().__hash__()
-        result ^= hash(tuple(self._endpoints))
-        result ^= hash(tuple(self._value))
         return result
 
     def __eq__(self, other):
