@@ -1031,6 +1031,7 @@ class Test(unittest.TestCase):
             for vertex in graph.vertices.values():
                 for v in GraphAlgorithms.dfs(vertex):
                     collected_vertices.append(v)
+
             assert len(collected_vertices) == len(vertices)
         now = datetime.now()
         print(f"End: {now}")
