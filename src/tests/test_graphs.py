@@ -5,7 +5,7 @@
 import os
 import random
 import unittest
-
+from collections import defaultdict
 from graph.core.flags import Flags
 from graph.core.logger import Logger
 from graph.core.text import Text
@@ -1266,6 +1266,109 @@ class Test(unittest.TestCase):
             for v in GraphAlgorithms.dfs(v_a):
                 collected_vertices.append(v)
         assert collected_vertices == [v_a, v_d, v_f, v_c, v_e, v_b]
+
+    def test_graph_dfs_connected_components_success(self):
+        graph = Graph(digraph=False)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        v6 = Vertex(6, '6', 6)
+        v7 = Vertex(7, '7', 7)
+        v8 = Vertex(8, '8', 8)
+        v9 = Vertex(9, '9', 9)
+        v10 = Vertex(10, '10', 10)
+        v11 = Vertex(11, '11', 11)
+        v12 = Vertex(12, '12', 12)
+        v13 = Vertex(13, '13', 13)
+        v14 = Vertex(14, '14', 14)
+        v15 = Vertex(15, '15', 15)
+        v16 = Vertex(16, '16', 16)
+        v17 = Vertex(17, '17', 17)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_vertex(v6)
+        graph.add_vertex(v7)
+        graph.add_vertex(v8)
+        graph.add_vertex(v9)
+        graph.add_vertex(v10)
+        graph.add_vertex(v11)
+        graph.add_vertex(v12)
+        graph.add_vertex(v13)
+        graph.add_vertex(v14)
+        graph.add_vertex(v15)
+        graph.add_vertex(v16)
+        graph.add_vertex(v17)
+        graph.add_edge(v0, v4, '0->4')
+        graph.add_edge(v0, v8, '0->4')
+        graph.add_edge(v0, v13, '0->4')
+        graph.add_edge(v0, v14, '0->4')
+        graph.add_edge(v1, v5, '1->5')
+        graph.add_edge(v2, v9, '2->9')
+        graph.add_edge(v2, v15, '2->15')
+        graph.add_edge(v3, v9, '3->9')
+        graph.add_edge(v4, v0, '4->0')
+        graph.add_edge(v4, v8, '4->8')
+        graph.add_edge(v5, v1, '5->1')
+        graph.add_edge(v5, v16, '5->16')
+        graph.add_edge(v5, v17, '5->17')
+        graph.add_edge(v6, v7, '6->7')
+        graph.add_edge(v6, v11, '6->11')
+        graph.add_edge(v7, v6, '7->6')
+        graph.add_edge(v7, v11, '7->11')
+        graph.add_edge(v8, v0, '8->0')
+        graph.add_edge(v8, v4, '8->4')
+        graph.add_edge(v8, v14, '8->14')
+        graph.add_edge(v9, v2, '9->2')
+        graph.add_edge(v9, v3, '9->3')
+        graph.add_edge(v9, v15, '9->15')
+        graph.add_edge(v10, v15, '10->15')
+        graph.add_edge(v11, v6, '11->6')
+        graph.add_edge(v11, v7, '11->7')
+        graph.add_edge(v13, v0, '13->0')
+        graph.add_edge(v13, v14, '13->14')
+        graph.add_edge(v15, v2, '15->2')
+        graph.add_edge(v15, v9, '15->9')
+        graph.add_edge(v15, v10, '15->10')
+        graph.add_edge(v16, v5, '16->5')
+        graph.add_edge(v17, v5, '17->5')
+        # Test.show_graph(graph)
+        collected_vertices = list()
+        components = defaultdict(list)
+        component_number = 0
+        for vertex in graph.vertices.values():
+            prev_count = len(collected_vertices)
+            for v in GraphAlgorithms.dfs(vertex):
+                collected_vertices.append(v)
+                components[component_number].append(v)
+            if len(collected_vertices) != prev_count:
+                component_number += 1
+        assert len(collected_vertices) == len(graph.vertices)
+        assert len(components) == 5
+        assert (v0 in components[0] and
+                v4 in components[0] and
+                v8 in components[0] and
+                v13 in components[0] and
+                v14 in components[0])
+        assert (v1 in components[1] and
+                v5 in components[1] and
+                v16 in components[1] and
+                v17 in components[1])
+        assert (v2 in components[2] and
+                v3 in components[2] and
+                v9 in components[2] and
+                v10 in components[2] and
+                v15 in components[2])
+        assert (v6 in components[3] and
+                v7 in components[3] and
+                v11 in components[3])
+        assert (v12 in components[4])
 
 
 if __name__ == '__main__':
