@@ -1440,7 +1440,7 @@ class Test(unittest.TestCase):
         graph.add_edge(v8, v6, '8->6')
         graph.add_edge(v9, v2, '9->2')
         # Test.show_graph(graph)
-        roots = GraphAlgorithms.find_tree_root(graph)
+        roots = GraphAlgorithms.find_tree_roots(graph)
         print(f"Roots: {roots}")
         assert len(roots) > 0
 
@@ -1457,7 +1457,7 @@ class Test(unittest.TestCase):
             vertices = list(graph.vertices.values())
             print(f"Vertices collected ... {len(graph.vertices)}")
             print(f"Edges collected ... {len(graph.edges)}")
-            roots = GraphAlgorithms.find_tree_root(graph)
+            roots = GraphAlgorithms.find_tree_roots(graph)
             print(roots)
             assert len(roots) > 0
         now = datetime.now()

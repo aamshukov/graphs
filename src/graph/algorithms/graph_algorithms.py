@@ -86,7 +86,7 @@ class GraphAlgorithms(Base):
                     queue.append(adjacence.vertex)  # enqueue
 
     @staticmethod
-    def find_tree_root(graph):
+    def find_tree_roots(graph):
         """
         """
         roots = {k: v.degree for (k, v) in graph.vertices.items()}
