@@ -117,6 +117,10 @@ class Vertex(Entity, Visitable):
         self._color = color
 
     @property
+    def degree(self):
+        return len(self._adjacencies)
+
+    @property
     def adjacencies(self):
         """
         """

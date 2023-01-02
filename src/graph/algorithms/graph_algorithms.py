@@ -84,3 +84,22 @@ class GraphAlgorithms(Base):
             for adjacence in vertex.adjacencies:
                 if (adjacence.vertex.flags & Flags.VISITED) != Flags.VISITED:
                     queue.append(adjacence.vertex)  # enqueue
+
+    @staticmethod
+    def find_tree_root(graph):
+        """
+        """
+        roots = {k: v.degree for (k, v) in graph.vertices.items()}
+        level = 0
+        while True:
+            level += 1
+            excluded_roots = list()
+            for root in roots.items():
+                if root[1] - level < 2:             # '< 2' because can be only up to 2 roots - alternative way
+                    excluded_roots.append(root[0])  # to find root(s) is to find the longest path and take its middle,
+            if len(excluded_roots) != len(roots):   # the longest path might be even or odd, that's way 2
+                for root in excluded_roots:
+                    del(roots[root])
+            else:
+                break
+        return tuple(roots)

@@ -1371,6 +1371,98 @@ class Test(unittest.TestCase):
                 v11 in components[3])
         assert (v12 in components[4])
 
+    def test_graph_dfs_connected_components_random_success(self):
+        from datetime import datetime
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            # Test.show_graph(graph)
+            vertices = list(graph.vertices.values())
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            collected_vertices = list()
+            components = defaultdict(list)
+            component_number = 0
+            for vertex in graph.vertices.values():
+                prev_count = len(collected_vertices)
+                for v in GraphAlgorithms.dfs(vertex):
+                    collected_vertices.append(v)
+                    components[component_number].append(v)
+                if len(collected_vertices) != prev_count:
+                    component_number += 1
+            print(f"Components: {len(components)}")
+            assert len(collected_vertices) == len(graph.vertices)
+            assert len(components) > 0
+        now = datetime.now()
+        print(f"End: {now}")
+
+    def test_find_tree_root(self):
+        graph = Graph(digraph=False)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        v6 = Vertex(6, '6', 6)
+        v7 = Vertex(7, '7', 7)
+        v8 = Vertex(8, '8', 8)
+        v9 = Vertex(9, '9', 9)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_vertex(v6)
+        graph.add_vertex(v7)
+        graph.add_vertex(v8)
+        graph.add_vertex(v9)
+        graph.add_edge(v0, v1, '0->1')
+        graph.add_edge(v1, v0, '1->0')
+        graph.add_edge(v1, v2, '1->2')
+        graph.add_edge(v2, v1, '2->1')
+        graph.add_edge(v2, v3, '2->3')
+        graph.add_edge(v2, v6, '2->6')
+        graph.add_edge(v2, v9, '2->9')
+        graph.add_edge(v3, v2, '3->2')
+        graph.add_edge(v3, v4, '3->4')
+        graph.add_edge(v3, v5, '3->5')
+        graph.add_edge(v4, v3, '4->3')
+        graph.add_edge(v5, v3, '5->3')
+        graph.add_edge(v6, v7, '6->7')
+        graph.add_edge(v6, v8, '6->8')
+        graph.add_edge(v7, v6, '7->6')
+        graph.add_edge(v8, v6, '8->6')
+        graph.add_edge(v9, v2, '9->2')
+        # Test.show_graph(graph)
+        roots = GraphAlgorithms.find_tree_root(graph)
+        print(f"Roots: {roots}")
+        assert len(roots) > 0
+
+    def test_find_tree_random_root(self):
+        from datetime import datetime
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            # Test.show_graph(graph)
+            vertices = list(graph.vertices.values())
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            roots = GraphAlgorithms.find_tree_root(graph)
+            print(roots)
+            assert len(roots) > 0
+        now = datetime.now()
+        print(f"End: {now}")
+
 
 if __name__ == '__main__':
     """
