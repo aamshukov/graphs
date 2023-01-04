@@ -6,7 +6,13 @@ import os
 import random
 import unittest
 from collections import defaultdict
+from datetime import datetime
+import networkx as nx
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 from graph.core.flags import Flags
+from graph.core.colors import Colors
 from graph.core.logger import Logger
 from graph.core.text import Text
 from graph.adt.disjoint_set import DisjointSet
@@ -100,7 +106,6 @@ class Test(unittest.TestCase):
     def build_networkx_graph(graph):
         """
         """
-        import networkx as nx
         if graph.digraph:
             result = nx.MultiDiGraph()
         else:
@@ -113,9 +118,6 @@ class Test(unittest.TestCase):
 
     @staticmethod
     def show_graph(graph):
-        import networkx as nx
-        import matplotlib
-        import matplotlib.pyplot as plt
         plt.style.use('ggplot')
         matplotlib.use('tkagg')
         nx_graph = Test.build_networkx_graph(graph)
@@ -124,8 +126,6 @@ class Test(unittest.TestCase):
 
     @staticmethod
     def generate_random_graph(n=3, digraph=False):
-        import numpy as np
-        import networkx as nx
         p = np.random.rand(n, n)  # your "matrix of probabilities"
         adjacency = np.random.rand(*p.shape) <= p  # adjacency[ii, jj] is True with probability P[ii, jj]
         nx_graph = nx.from_numpy_matrix(adjacency, nx.DiGraph if digraph else nx.Graph)
@@ -579,7 +579,6 @@ class Test(unittest.TestCase):
         assert len(graph.edges) == 0
 
     def test_graph_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000
@@ -906,7 +905,6 @@ class Test(unittest.TestCase):
         assert len(graph.edges) == 0
 
     def test_digraph_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000
@@ -970,7 +968,6 @@ class Test(unittest.TestCase):
         assert visitor.collected_vertices == [v1, v2, v3]
 
     def test_graph_dfs_visitor_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 200  # watch recursion
@@ -1015,7 +1012,6 @@ class Test(unittest.TestCase):
         assert collected_vertices == [v1, v2, v3]
 
     def test_graph_dfs_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1062,7 +1058,6 @@ class Test(unittest.TestCase):
         assert visitor.collected_vertices == [v1, v2, v3]
 
     def test_digraph_dfs_visitor_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 200  # watch recursion
@@ -1108,7 +1103,6 @@ class Test(unittest.TestCase):
         assert collected_vertices == [v1, v3, v2]
 
     def test_digraph_dfs_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1175,7 +1169,6 @@ class Test(unittest.TestCase):
         assert collected_vertices == [v2, v0, v3, v1]  # 2, 0, 3, 1
 
     def test_graph_bfs_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1196,7 +1189,6 @@ class Test(unittest.TestCase):
         print(f"End: {now}")
 
     def test_digraph_bfs_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1372,14 +1364,13 @@ class Test(unittest.TestCase):
         assert (v12 in components[4])
 
     def test_graph_dfs_connected_components_random_success(self):
-        from datetime import datetime
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
         for k in range(100):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
-            graph = Test.generate_random_graph(n, digraph=True)
+            graph = Test.generate_random_graph(n, digraph=False)
             # Test.show_graph(graph)
             vertices = list(graph.vertices.values())
             print(f"Vertices collected ... {len(graph.vertices)}")
@@ -1400,7 +1391,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_find_tree_root(self):
+    def test_find_tree_center_success(self):
         graph = Graph(digraph=False)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1423,43 +1414,170 @@ class Test(unittest.TestCase):
         graph.add_vertex(v8)
         graph.add_vertex(v9)
         graph.add_edge(v0, v1, '0->1')
-        graph.add_edge(v1, v0, '1->0')
+        # graph.add_edge(v1, v0, '1->0')
         graph.add_edge(v1, v2, '1->2')
-        graph.add_edge(v2, v1, '2->1')
+        # graph.add_edge(v2, v1, '2->1')
         graph.add_edge(v2, v3, '2->3')
         graph.add_edge(v2, v6, '2->6')
         graph.add_edge(v2, v9, '2->9')
-        graph.add_edge(v3, v2, '3->2')
+        # graph.add_edge(v3, v2, '3->2')
         graph.add_edge(v3, v4, '3->4')
         graph.add_edge(v3, v5, '3->5')
-        graph.add_edge(v4, v3, '4->3')
-        graph.add_edge(v5, v3, '5->3')
+        # graph.add_edge(v4, v3, '4->3')
+        # graph.add_edge(v5, v3, '5->3')
         graph.add_edge(v6, v7, '6->7')
         graph.add_edge(v6, v8, '6->8')
-        graph.add_edge(v7, v6, '7->6')
-        graph.add_edge(v8, v6, '8->6')
-        graph.add_edge(v9, v2, '9->2')
+        # graph.add_edge(v7, v6, '7->6')
+        # graph.add_edge(v8, v6, '8->6')
+        # graph.add_edge(v9, v2, '9->2')
         # Test.show_graph(graph)
-        roots = GraphAlgorithms.find_tree_roots(graph)
+        roots = GraphAlgorithms.find_tree_centers(graph)
         print(f"Roots: {roots}")
-        assert len(roots) > 0
+        assert len(roots) == 1
+        assert roots[0] == v2
 
-    def test_find_tree_random_root(self):
-        from datetime import datetime
+    def test_find_tree_centers_success(self):
+        graph = Graph(digraph=False)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        v6 = Vertex(6, '6', 6)
+        v7 = Vertex(7, '7', 7)
+        v8 = Vertex(8, '8', 8)
+        v9 = Vertex(9, '9', 9)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_vertex(v6)
+        graph.add_vertex(v7)
+        graph.add_vertex(v8)
+        graph.add_vertex(v9)
+        graph.add_edge(v0, v1, '0->1')
+        graph.add_edge(v1, v3, '1->3')
+        graph.add_edge(v1, v4, '1->4')
+        graph.add_edge(v2, v3, '2->3')
+        # graph.add_edge(v3, v1, '3->1')
+        # graph.add_edge(v3, v2, '3->2')
+        graph.add_edge(v3, v6, '3->6')
+        graph.add_edge(v3, v7, '3->7')
+        # graph.add_edge(v4, v1, '4->1')
+        graph.add_edge(v4, v5, '4->5')
+        graph.add_edge(v4, v8, '4->8')
+        # graph.add_edge(v5, v4, '5->4')
+        # graph.add_edge(v6, v3, '6->3')
+        graph.add_edge(v6, v9, '6->9')
+        # graph.add_edge(v7, v3, '7->3')
+        # graph.add_edge(v8, v4, '8->4')
+        # graph.add_edge(v9, v6, '9->6')
+        # Test.show_graph(graph)
+        roots = GraphAlgorithms.find_tree_centers(graph)
+        print(f"Roots: {roots}")
+        assert len(roots) == 2
+        assert roots[0] == v1
+        assert roots[1] == v3
+
+    def test_find_tree_centers_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
-        n = 1000  # watch recursion
+        n = 100  # watch recursion
         for k in range(100):
             now = datetime.now()
             print(f"Iteration: {k}  {now}")
-            graph = Test.generate_random_graph(n, digraph=True)
+            graph = Test.generate_random_graph(n, digraph=False)
             # Test.show_graph(graph)
-            vertices = list(graph.vertices.values())
             print(f"Vertices collected ... {len(graph.vertices)}")
             print(f"Edges collected ... {len(graph.edges)}")
-            roots = GraphAlgorithms.find_tree_roots(graph)
-            print(roots)
-            assert len(roots) > 0
+            roots = GraphAlgorithms.find_tree_centers(graph)
+            print([root.id for root in roots])
+        now = datetime.now()
+        print(f"End: {now}")
+
+    @staticmethod
+    def get_topological_order_dfs_colored_graph():
+        graph = Graph(digraph=True)
+        va = Vertex(0,  'A', 'A', color=Colors.WHITE)
+        vb = Vertex(1,  'B', 'B', color=Colors.WHITE)
+        vc = Vertex(2,  'C', 'C', color=Colors.WHITE)
+        vd = Vertex(3,  'D', 'D', color=Colors.WHITE)
+        ve = Vertex(4,  'E', 'E', color=Colors.WHITE)
+        vf = Vertex(5,  'F', 'F', color=Colors.WHITE)
+        vg = Vertex(6,  'G', 'G', color=Colors.WHITE)
+        vh = Vertex(7,  'H', 'H', color=Colors.WHITE)
+        vj = Vertex(8,  'J', 'J', color=Colors.WHITE)
+        vi = Vertex(9,  'I', 'I', color=Colors.WHITE)
+        vk = Vertex(10, 'K', 'K', color=Colors.WHITE)
+        vl = Vertex(11, 'L', 'L', color=Colors.WHITE)
+        vm = Vertex(12, 'M', 'M', color=Colors.WHITE)
+        graph.add_vertex(va)
+        graph.add_vertex(vb)
+        graph.add_vertex(vc)
+        graph.add_vertex(vd)
+        graph.add_vertex(ve)
+        graph.add_vertex(vf)
+        graph.add_vertex(vg)
+        graph.add_vertex(vh)
+        graph.add_vertex(vj)
+        graph.add_vertex(vi)
+        graph.add_vertex(vk)
+        graph.add_vertex(vl)
+        graph.add_vertex(vm)
+        graph.add_edge(va, vd, 'A->D')
+        graph.add_edge(vb, vd, 'B->D')
+        graph.add_edge(vc, va, 'C->A')
+        graph.add_edge(vc, vb, 'C->B')
+        graph.add_edge(vd, vh, 'D->H')
+        graph.add_edge(vd, vg, 'D->G')
+        graph.add_edge(ve, va, 'E->A')
+        graph.add_edge(ve, vd, 'E->D')
+        graph.add_edge(ve, vf, 'E->F')
+        graph.add_edge(vf, vj, 'F->J')
+        graph.add_edge(vf, vk, 'F->K')
+        graph.add_edge(vg, vi, 'G->I')
+        graph.add_edge(vh, vi, 'H->I')
+        graph.add_edge(vh, vj, 'H->J')
+        graph.add_edge(vj, vl, 'J->L')
+        graph.add_edge(vj, vm, 'J->M')
+        graph.add_edge(vi, vl, 'I->L')
+        graph.add_edge(vk, vj, 'K->J')
+        # Test.show_graph(graph)
+        return graph
+
+    def test_get_topological_order_dfs_colored(self):
+        graph = Test.get_topological_order_dfs_colored_graph()
+        topological_order = GraphAlgorithms.get_topological_order_dfs_colored(graph)
+        topological_order_result = [v.value for v in topological_order]
+        print(f"Topological order: {topological_order_result}")
+        assert len(topological_order_result) == len(graph.vertices)
+        assert topological_order_result == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'H', 'J', 'M', 'G', 'I', 'L']
+
+    def test_get_topological_order_dfs_colored_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 100  # watch recursion
+        for k in range(1):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            for vertex in graph.vertices.values():
+                vertex.color = color=Colors.WHITE
+            # Test.show_graph(graph)
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            try:
+                topological_order = GraphAlgorithms.get_topological_order_dfs_colored(graph)
+                topological_order_result = [v.value for v in topological_order]
+                print(f"Topological order: {topological_order_result}")
+                assert len(topological_order_result) == len(graph.vertices)
+            except ValueError:
+                pass
+            else:
+                pass
         now = datetime.now()
         print(f"End: {now}")
 

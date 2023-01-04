@@ -44,7 +44,7 @@ class Edge(Entity):
         """
         result = (super().__eq__(other) and
                   tuple(self._endpoints) == tuple(other.endpoints) and
-                  tuple(self._value) == tuple(other.value))
+                  self._value == other.value)
         return result
 
     @property

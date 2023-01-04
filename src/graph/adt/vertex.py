@@ -52,7 +52,7 @@ class Vertex(Entity, Visitable):
         """
         result = (super().__eq__(other) and
                   Text.equal(self._label, other.label) and
-                  tuple(self._value) == tuple(other.value) and
+                  self._value == other.value and
                   tuple(self._adjacencies) == tuple(other.adjacencies))
         return result
 
@@ -119,6 +119,10 @@ class Vertex(Entity, Visitable):
     @property
     def degree(self):
         return len(self._adjacencies)
+
+    @property
+    def leaf(self):
+        return self.degree == 1 or self.degree == 0
 
     @property
     def adjacencies(self):
