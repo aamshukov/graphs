@@ -131,7 +131,7 @@ class GraphAlgorithms(Base):
     @staticmethod
     def get_topological_order_dfs_colored(graph):
         """
-        Thanks to HelloKoding
+        Based on HelloKoding
         https://hellokoding.com/topological-sort/
         """
         assert graph.digraph, "Invalid graph type, must be directed graph."
