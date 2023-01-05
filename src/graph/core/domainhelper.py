@@ -30,3 +30,8 @@ class DomainHelper(Base):
         for klass in obj.__class__.__mro__:
             result.update(getattr(klass, '__dict__', []))
         return result
+
+    @staticmethod
+    def print_matrix(matrix):
+        print(matrix)
+        print('')

@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph data type """
+import numpy as np
 from graph.core.entity import Entity
 from graph.adt.edge import Edge
 
@@ -83,6 +84,13 @@ class Graph(Entity):
         """
         """
         return self._edges
+
+    def matrix(self, value_type=float):
+        size = len(self._vertices)
+        result = np.zeros((size, size), dtype=value_type)
+        for edge in self._edges.values():
+            result[edge.endpoints[0].id][edge.endpoints[1].id] = edge.value
+        return result
 
     def add_vertex(self, vertex):
         """

@@ -15,6 +15,7 @@ from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.core.logger import Logger
 from graph.core.text import Text
+from graph.core.domainhelper import DomainHelper
 from graph.adt.disjoint_set import DisjointSet
 from graph.core.value import Value
 from graph.core.entity import Entity
@@ -1556,6 +1557,15 @@ class Test(unittest.TestCase):
         assert len(topological_order_result) == len(graph.vertices)
         assert topological_order_result == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'H', 'J', 'M', 'G', 'I', 'L']
 
+    def test_get_topological_order_dfs_colored_gen(self):
+        graph = Test.get_topological_order_dfs_colored_graph()
+        topological_order_gen = GraphAlgorithms.get_topological_order_dfs_colored_gen(graph)
+        topological_order = [v.value for v in topological_order_gen]
+        topological_order = [topological_order[k] for k in range(len(topological_order)-1, -1, -1)]
+        print(f"Topological order: {topological_order}")
+        assert len(topological_order) == len(graph.vertices)
+        assert topological_order == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'H', 'J', 'M', 'G', 'I', 'L']
+
     def test_get_topological_order_dfs_colored_random(self):
         now = datetime.now()
         print(f"Start: {now}")
@@ -1580,6 +1590,93 @@ class Test(unittest.TestCase):
                 pass
         now = datetime.now()
         print(f"End: {now}")
+
+    def test_get_topological_order_kahn(self):
+        graph = Test.get_topological_order_dfs_colored_graph()
+        topological_order_gen = GraphAlgorithms.get_topological_order_kahn(graph)
+        topological_order = [v.value for v in topological_order_gen]
+        print(f"Topological order: {topological_order}")
+        assert len(topological_order) == len(graph.vertices)
+        assert topological_order == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'G', 'H', 'J', 'M', 'I', 'L']
+
+    def test_get_topological_order_kahn_small(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_edge(v0, v1, '0->1')
+        graph.add_edge(v0, v3, '0->3')
+        graph.add_edge(v2, v0, '2->0')
+        graph.add_edge(v2, v4, '2->4')
+        graph.add_edge(v3, v1, '3->1')
+        graph.add_edge(v4, v3, '4->3')
+        graph.add_edge(v4, v5, '4->5')
+        graph.add_edge(v5, v1, '5->1')
+        topological_order_gen = GraphAlgorithms.get_topological_order_kahn(graph)
+        topological_order = [v.value for v in topological_order_gen]
+        print(f"Topological order: {topological_order}")
+        assert len(topological_order) == len(graph.vertices)
+        assert topological_order == [2, 4, 5, 0, 3, 1]
+
+    def test_get_topological_order_kahn_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 100  # watch recursion
+        for k in range(1):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            for vertex in graph.vertices.values():
+                vertex.color = color=Colors.WHITE
+            # Test.show_graph(graph)
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            topological_order_gen = GraphAlgorithms.get_topological_order_kahn(graph)
+            topological_order = [v.value for v in topological_order_gen]
+            if len(topological_order) == len(graph.vertices):
+                print(f"Topological order: {topological_order}")
+                assert len(topological_order) == len(graph.vertices)
+            else:
+                print("Topological order does not exists, ound cycle(s).")
+        now = datetime.now()
+        print(f"End: {now}")
+
+    def test_adjacency_matrix(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0)
+        v1 = Vertex(1)
+        v2 = Vertex(2)
+        v3 = Vertex(3)
+        v4 = Vertex(4)
+        v5 = Vertex(5)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_edge(v0, v1, 1.3)
+        graph.add_edge(v0, v3, -2.53)
+        graph.add_edge(v2, v0, 3.67)
+        graph.add_edge(v2, v4, 4.99)
+        graph.add_edge(v3, v1, -5.19)
+        graph.add_edge(v4, v3, 6.76)
+        graph.add_edge(v4, v5, -7.54)
+        graph.add_edge(v5, v1, 8.623)
+        matrix = graph.matrix()
+        DomainHelper.print_matrix(matrix)
+        matrix = graph.matrix(int)
+        DomainHelper.print_matrix(matrix)
+        pass
 
 
 if __name__ == '__main__':

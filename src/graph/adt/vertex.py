@@ -125,6 +125,12 @@ class Vertex(Entity, Visitable):
         return self.degree == 1 or self.degree == 0
 
     @property
+    def edges(self):
+        """
+        """
+        return [adj.edge for adj in self._adjacencies]
+
+    @property
     def adjacencies(self):
         """
         """

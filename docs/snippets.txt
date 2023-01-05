@@ -145,3 +145,16 @@ def greeting(userid):
 
 
 
+
+reverse list
+[result[k] for k in range(len(result)-1, -1, -1)]
+
+
+
+
+        for i in range(len(self._vertices)):
+            result.append([0 for i in range(len(self._vertices))])
+        for edge in self._edges.values():
+            result[edge.endpoints[0].id][edge.endpoints[1].id] = edge.value if edge.value else 1
+
+

@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph algorithms """
+from collections import defaultdict
 from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.core.domainhelper import DomainHelper
@@ -133,9 +134,45 @@ class GraphAlgorithms(Base):
         """
         Based on HelloKoding
         https://hellokoding.com/topological-sort/
+        https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search
+        https://www.geeksforgeeks.org/detect-cycle-direct-graph-using-colors/?ref=rp
+        Colors:
+            WHITE: Vertex is not processed yet. Initially, all vertices are WHITE.
+            GRAY: Vertex is being processed (DFS for this vertex has started, but not finished
+                  which means that all descendants (in DFS tree) of this vertex are not processed yet
+                  or this vertex is in the function call stack.
+            BLACK: Vertex and all its descendants are processed.
+                   While doing DFS, if an edge is encountered from current vertex to a GRAY vertex,
+                   then this edge is back edge and hence there is a cycle.
         """
         assert graph.digraph, "Invalid graph type, must be directed graph."
         result = list()
+        stack = list()
+        for vertex in graph.vertices.values():
+            if vertex.color != Colors.WHITE:  # is being processed or processed
+                continue
+            stack.append(vertex)  # push
+            while stack:
+                vertex = stack[-1]  # peek
+                if vertex.color == Colors.WHITE:  # about to explore
+                    vertex.color = Colors.GRAY
+                else:
+                    vertex.color = Colors.BLACK  # mark as processed, add to result
+                    result.insert(0, stack.pop())
+                for adjacence in vertex.adjacencies:
+                    if adjacence.vertex.color == Colors.GRAY:
+                        raise ValueError("Invalid graph, found a cycle.")
+                    else:
+                        if adjacence.vertex.color == Colors.WHITE:
+                            stack.append(adjacence.vertex)  # push
+        return result
+
+    @staticmethod
+    def get_topological_order_dfs_colored_gen(graph):
+        """
+        Based on ... get_topological_order_dfs_colored
+        """
+        assert graph.digraph, "Invalid graph type, must be directed graph."
         stack = list()
         for vertex in graph.vertices.values():
             if vertex.color != Colors.WHITE:
@@ -147,11 +184,31 @@ class GraphAlgorithms(Base):
                     vertex.color = Colors.GRAY
                 else:
                     vertex.color = Colors.BLACK
-                    result.append(stack.pop())
+                    yield stack.pop()
                 for adjacence in vertex.adjacencies:
                     if adjacence.vertex.color == Colors.GRAY:
                         raise ValueError("Invalid graph, found a cycle.")
                     else:
                         if adjacence.vertex.color == Colors.WHITE:
                             stack.append(adjacence.vertex)  # push
-        return [result[k] for k in range(len(result)-1, -1, -1)]
+
+    @staticmethod
+    def get_topological_order_kahn(graph):
+        """
+        Kahn's algorithm.
+        """
+        assert graph.digraph, "Invalid graph type, must be directed graph."
+        in_degree = {vertex: 0 for vertex in graph.vertices.values()}
+        for edge in graph.edges.values():
+            in_degree[edge.endpoints[1]] += 1
+        stack = list()
+        for degree in in_degree.items():
+            if degree[1] == 0:
+                stack.append(degree[0])  # push
+        while stack:
+            vertex = stack.pop()  # pop
+            yield vertex
+            for adjacence in vertex.adjacencies:
+                in_degree[adjacence.vertex] -= 1
+                if in_degree[adjacence.vertex] == 0:
+                    stack.append(adjacence.vertex)  # push
