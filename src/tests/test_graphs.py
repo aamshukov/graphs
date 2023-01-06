@@ -164,6 +164,19 @@ class Test(unittest.TestCase):
             result.add_edge(vertices[u], vertices[v])
         return result
 
+    @staticmethod
+    def generate_random_tree(n=3):
+        nx_tree = nx.random_tree(n, seed=0, create_using=nx.DiGraph)
+        nodes = dict()
+        for nx_node in nx_tree.nodes:
+            node = Tree(nx_node, str(nx_node), nx_node)
+            nodes[nx_node] = node
+        for adj in nx_tree.adj.items():
+            node = nodes[adj[0]]
+            for kid in list(adj[1]):
+                node.add_kid(nodes[kid])
+        return nodes[0]
+
     def test_logger_success(self):
         path = r'd:\tmp'
         logger = Logger(path=path)
@@ -1739,6 +1752,21 @@ class Test(unittest.TestCase):
         assert preorder == [v1, v2, v4, v5, v3, v6, v7]
         assert postorder == [v4, v5, v2, v6, v7, v3, v1]
 
+    def test_networkx_random_tree(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            tree = Test.generate_random_tree(n)
+            # Test.show_tree(tree)
+            preorder, postorder = GraphAlgorithms.calculate_tree_traverses(tree)
+            assert len(preorder) == n
+            assert len(postorder) == n
+        now = datetime.now()
+        print(f"End: {now}")
+
     def test_calculate_euler_tour(self):
         v0 = Tree(0, '0')
         v1 = Tree(1, '1')
@@ -1774,6 +1802,20 @@ class Test(unittest.TestCase):
         # Test.show_tree(v1)
         nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v1)
         assert nodes == [v1, v2, v1, v3, v5, v3, v6, v3, v7, v3, v1, v4, v1]
+
+    def test_calculate_euler_tour_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            tree = Test.generate_random_tree(n)
+            # Test.show_tree(tree)
+            nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(tree)
+            assert len(nodes) == (2 * n - 1)
+        now = datetime.now()
+        print(f"End: {now}")
 
 
 if __name__ == '__main__':
