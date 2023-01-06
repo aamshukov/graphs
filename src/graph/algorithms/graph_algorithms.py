@@ -212,3 +212,61 @@ class GraphAlgorithms(Base):
                 in_degree[adjacence.vertex] -= 1
                 if in_degree[adjacence.vertex] == 0:
                     stack.append(adjacence.vertex)  # push
+
+    @staticmethod
+    def calculate_tree_traverses(tree):
+        """
+        Calculates preorder and postorder paths of the tree.
+        """
+        class Pair:
+            __slots__ = ['tree', 'value']
+
+            def __init__(self, tree, value):
+                self.tree = tree
+                self.value = value
+
+        preorder = list()
+        postorder = list()
+        stack = [Pair(tree, 1)]  # push
+        while stack:
+            pair = stack.pop()  # pop
+            if pair.value == 1:
+                preorder.append(pair.tree)
+                pair.value += 1
+                stack.append(pair)
+                for kid in reversed(pair.tree.kids):
+                    stack.append(Pair(kid, 1))  # push
+            elif pair.value == 2:  # keep going, for non-binary trees does not make sense
+                pair.value += 1
+                stack.append(pair)
+            else:  # pair.value == 3
+                postorder.append(pair.tree)
+        return preorder, postorder
+
+    @staticmethod
+    def calculate_euler_tour(tree):
+        """
+        Calculates Euler tour around the tree.
+        Mimics:
+            def dfs(node):
+                nodes.append(node)
+                for kid in node.kids:
+                    dfs(kid)
+                    nodes.append(node)
+        """
+        nodes = list()   # array of visiting nodes, 2 * N - 1
+        lasts = list()   # array of last euler tour indices
+        depths = list()  # array of depths of nodes, 2 * N - 1
+        stack = [tree]   # push root
+        while stack:
+            tree = stack[-1]  # peek
+            tree.flags |= Flags.VISITED
+            nodes.append(tree)
+            prev_stack_len = len(stack)
+            for kid in tree.kids:
+                if (kid.flags & Flags.VISITED) != Flags.VISITED:
+                    stack.append(kid)  # push
+                    break  # important, mimics left most recursion
+            if len(stack) == prev_stack_len:
+                stack.pop()  # nodes are removed from stack when there are no more kids to visit
+        return nodes, lasts, depths

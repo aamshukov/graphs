@@ -20,8 +20,8 @@ from graph.adt.disjoint_set import DisjointSet
 from graph.core.value import Value
 from graph.core.entity import Entity
 from graph.adt.vertex import Vertex
-from graph.adt.edge import Edge
 from graph.adt.graph import Graph
+from graph.adt.tree import Tree
 from graph.algorithms.graph_algorithms import GraphAlgorithms
 from graph.algorithms.graph_visitor import GraphVisitor
 
@@ -123,6 +123,29 @@ class Test(unittest.TestCase):
         matplotlib.use('tkagg')
         nx_graph = Test.build_networkx_graph(graph)
         nx.draw_networkx(nx_graph)
+        plt.show()
+
+    @staticmethod
+    def build_networkx_tree(tree):
+        """
+        """
+        result = nx.MultiDiGraph()
+        stack = list()
+        stack.append(tree)  # push
+        while stack:
+            node = stack.pop()
+            # result.add_node(node.label)
+            for kid in node.kids:
+                result.add_edge(node.label, kid.label)
+                stack.append(kid)  # push
+        return result
+
+    @staticmethod
+    def show_tree(tree):
+        plt.style.use('ggplot')
+        matplotlib.use('tkagg')
+        nx_tree = Test.build_networkx_tree(tree)
+        nx.draw_networkx(nx_tree)
         plt.show()
 
     @staticmethod
@@ -1677,6 +1700,80 @@ class Test(unittest.TestCase):
         matrix = graph.matrix(int)
         DomainHelper.print_matrix(matrix)
         pass
+
+    def test_adjacency_matrix_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 100  # watch recursion
+        for k in range(1):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            for vertex in graph.vertices.values():
+                vertex.color = color=Colors.WHITE
+            # Test.show_graph(graph)
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            matrix = graph.matrix()
+            DomainHelper.print_matrix(matrix)
+            assert matrix.size == len(graph.vertices)**2
+        now = datetime.now()
+        print(f"End: {now}")
+
+    def test_calculate_tree_traverses(self):
+        v1 = Tree(1, '1')
+        v2 = Tree(2, '2')
+        v3 = Tree(3, '3')
+        v4 = Tree(4, '4')
+        v5 = Tree(5, '5')
+        v6 = Tree(6, '6')
+        v7 = Tree(7, '7')
+        v1.add_kid(v2)
+        v1.add_kid(v3)
+        v2.add_kid(v4)
+        v2.add_kid(v5)
+        v3.add_kid(v6)
+        v3.add_kid(v7)
+        # Test.show_tree(v0)
+        preorder, postorder = GraphAlgorithms.calculate_tree_traverses(v1)
+        assert preorder == [v1, v2, v4, v5, v3, v6, v7]
+        assert postorder == [v4, v5, v2, v6, v7, v3, v1]
+
+    def test_calculate_euler_tour(self):
+        v0 = Tree(0, '0')
+        v1 = Tree(1, '1')
+        v2 = Tree(2, '2')
+        v3 = Tree(3, '3')
+        v4 = Tree(4, '4')
+        v5 = Tree(5, '5')
+        v6 = Tree(6, '6')
+        v0.add_kid(v1)
+        v0.add_kid(v2)
+        v1.add_kid(v3)
+        v2.add_kid(v4)
+        v2.add_kid(v5)
+        v4.add_kid(v6)
+        # Test.show_tree(v0)
+        nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v0)
+        assert nodes == [v0, v1, v3, v1, v0, v2, v4, v6, v4, v2, v5, v2, v0]
+
+    def test_calculate_euler_tour2(self):
+        v1 = Tree(1, '1')
+        v2 = Tree(2, '2')
+        v3 = Tree(3, '3')
+        v4 = Tree(4, '4')
+        v5 = Tree(5, '5')
+        v6 = Tree(6, '6')
+        v7 = Tree(7, '7')
+        v1.add_kid(v2)
+        v1.add_kid(v3)
+        v1.add_kid(v4)
+        v3.add_kid(v5)
+        v3.add_kid(v6)
+        v3.add_kid(v7)
+        # Test.show_tree(v1)
+        nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v1)
+        assert nodes == [v1, v2, v1, v3, v5, v3, v6, v3, v7, v3, v1, v4, v1]
 
 
 if __name__ == '__main__':

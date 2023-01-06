@@ -133,11 +133,13 @@ class Tree(Entity, Visitable):
     def add_kid(self, kid):
         """
         """
+        kid.papa = self
         self._kids.append(kid)
 
     def remove_kid(self, kid):
         """
         """
+        kid.papa = None
         self._kids.remove(kid)
 
     def validate(self):
