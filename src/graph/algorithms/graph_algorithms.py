@@ -4,6 +4,7 @@
 #
 """ Graph algorithms """
 from collections import defaultdict
+from operator import itemgetter
 from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.core.domainhelper import DomainHelper
@@ -214,7 +215,7 @@ class GraphAlgorithms(Base):
                     stack.append(adjacence.vertex)  # push
 
     @staticmethod
-    def calculate_tree_traverses(tree):
+    def calculate_tree_traverses(tree, preorder_action=None, postorder_action=None):
         """
         Calculates preorder and postorder paths of the tree.
         """
@@ -232,6 +233,8 @@ class GraphAlgorithms(Base):
             pair = stack.pop()  # pop
             if pair.value == 1:
                 preorder.append(pair.tree)
+                if preorder_action:
+                    preorder_action(pair.tree)
                 pair.value += 1
                 stack.append(pair)
                 for kid in reversed(pair.tree.kids):
@@ -241,6 +244,8 @@ class GraphAlgorithms(Base):
                 stack.append(pair)
             else:  # pair.value == 3
                 postorder.append(pair.tree)
+                if postorder_action:
+                    postorder_action(pair.tree)
         return preorder, postorder
 
     @staticmethod
@@ -258,15 +263,39 @@ class GraphAlgorithms(Base):
         lasts = list()   # array of last euler tour indices
         depths = list()  # array of depths of nodes, 2 * N - 1
         stack = [tree]   # push root
+        depth = 0
+        k = 0
         while stack:
             tree = stack[-1]  # peek
             tree.flags |= Flags.VISITED
             nodes.append(tree)
+            depths.append(depth)
+            k += 1
             prev_stack_len = len(stack)
             for kid in tree.kids:
                 if (kid.flags & Flags.VISITED) != Flags.VISITED:
                     stack.append(kid)  # push
+                    depth += 1
                     break  # important, mimics left most recursion
             if len(stack) == prev_stack_len:
                 stack.pop()  # nodes are removed from stack when there are no more kids to visit
+                depth -= 1
         return nodes, lasts, depths
+
+    @staticmethod
+    def calculate_lowest_common_ancestor(tree, tree1, tree2):
+        """
+        Calculates the Lowest Common Ancestor (LCA) of two nodes in a tree.
+        Implementation is: Eulerian tour and Range Minimum Query (RMQ).
+        LCA of the node is the node itself.
+        """
+        # Eulerian tour
+        nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(tree)
+        # RMQ
+        k1 = nodes.index(tree1)
+        k2 = nodes.index(tree2)
+        if k1 > k2:
+            k1, k2 = k2, k1
+        sub_range = depths[k1: k2 + 1]  # +1 - inclusive
+        position = k1 + min(enumerate(sub_range), key=itemgetter(1))[0]
+        return nodes[position]

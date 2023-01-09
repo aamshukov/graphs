@@ -175,7 +175,7 @@ class Test(unittest.TestCase):
             node = nodes[adj[0]]
             for kid in list(adj[1]):
                 node.add_kid(nodes[kid])
-        return nodes[0]
+        return nodes
 
     def test_logger_success(self):
         path = r'd:\tmp'
@@ -1761,7 +1761,7 @@ class Test(unittest.TestCase):
             print(f"Iteration: {k}  {now}")
             tree = Test.generate_random_tree(n)
             # Test.show_tree(tree)
-            preorder, postorder = GraphAlgorithms.calculate_tree_traverses(tree)
+            preorder, postorder = GraphAlgorithms.calculate_tree_traverses(tree[0])
             assert len(preorder) == n
             assert len(postorder) == n
         now = datetime.now()
@@ -1783,7 +1783,10 @@ class Test(unittest.TestCase):
         v4.add_kid(v6)
         # Test.show_tree(v0)
         nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v0)
+        assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v0, v1, v3, v1, v0, v2, v4, v6, v4, v2, v5, v2, v0]
+        assert depths == [0, 1, 2, 1, 0, 1, 2, 3, 2, 1, 2, 1, 0]
+        assert len(depths) == (2 * 7 - 1)
 
     def test_calculate_euler_tour2(self):
         v1 = Tree(1, '1')
@@ -1801,7 +1804,10 @@ class Test(unittest.TestCase):
         v3.add_kid(v7)
         # Test.show_tree(v1)
         nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v1)
+        assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v1, v2, v1, v3, v5, v3, v6, v3, v7, v3, v1, v4, v1]
+        assert len(depths) == (2 * 7 - 1)
+        assert depths == [0, 1, 0, 1, 2, 1, 2, 1, 2, 1, 0, 1, 0]
 
     def test_calculate_euler_tour_random(self):
         now = datetime.now()
@@ -1812,8 +1818,95 @@ class Test(unittest.TestCase):
             print(f"Iteration: {k}  {now}")
             tree = Test.generate_random_tree(n)
             # Test.show_tree(tree)
-            nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(tree)
+            nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(tree[0])
             assert len(nodes) == (2 * n - 1)
+        now = datetime.now()
+        print(f"End: {now}")
+
+    @staticmethod
+    def tree_cleaner(vertex):
+        vertex.flags = Flags.CLEAR
+
+    def test_calculate_lowest_common_ancestor(self):
+        v0 = Tree(0, '0')
+        v1 = Tree(1, '1')
+        v2 = Tree(2, '2')
+        v3 = Tree(3, '3')
+        v4 = Tree(4, '4')
+        v5 = Tree(5, '5')
+        v6 = Tree(6, '6')
+        v0.add_kid(v1)
+        v0.add_kid(v2)
+        v1.add_kid(v3)
+        v2.add_kid(v4)
+        v2.add_kid(v5)
+        v4.add_kid(v6)
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v6, v5)
+        assert tree == v2
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v3, v3)
+        assert tree == v3
+
+    def test_calculate_lowest_common_ancestor_17_nodes(self):
+        v0 = Tree(0, '0')
+        v1 = Tree(1, '1')
+        v2 = Tree(2, '2')
+        v3 = Tree(3, '3')
+        v4 = Tree(4, '4')
+        v5 = Tree(5, '5')
+        v6 = Tree(6, '6')
+        v7 = Tree(6, '7')
+        v8 = Tree(6, '8')
+        v9 = Tree(6, '9')
+        v10 = Tree(10, '10')
+        v11 = Tree(11, '11')
+        v12 = Tree(12, '12')
+        v13 = Tree(13, '13')
+        v14 = Tree(14, '14')
+        v15 = Tree(15, '15')
+        v16 = Tree(16, '16')
+        v0.add_kid(v1)
+        v0.add_kid(v2)
+        v1.add_kid(v3)
+        v1.add_kid(v4)
+        v2.add_kid(v5)
+        v2.add_kid(v6)
+        v2.add_kid(v7)
+        v3.add_kid(v8)
+        v3.add_kid(v9)
+        v5.add_kid(v10)
+        v5.add_kid(v11)
+        v7.add_kid(v12)
+        v7.add_kid(v13)
+        v11.add_kid(v14)
+        v11.add_kid(v15)
+        v11.add_kid(v16)
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v14, v13)
+        assert tree == v2
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v12, v12)
+        assert tree == v12
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v16, v12)
+        assert tree == v2
+        GraphAlgorithms.calculate_tree_traverses(v0, Test.tree_cleaner)
+        tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v10, tree)
+        assert tree == v2
+
+    def test_calculate_lowest_common_ancestor_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            tree = Test.generate_random_tree(n)
+            k1 = random.randint(0, len(tree) - 1)
+            k2 = random.randint(0, len(tree) - 1)
+            tree = GraphAlgorithms.calculate_lowest_common_ancestor(tree[0], tree[k1], tree[k2])
+            print(tree.id)
         now = datetime.now()
         print(f"End: {now}")
 
