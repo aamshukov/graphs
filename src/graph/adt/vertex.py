@@ -117,14 +117,6 @@ class Vertex(Entity, Visitable):
         self._color = color
 
     @property
-    def degree(self):
-        return len(self._adjacencies)
-
-    @property
-    def leaf(self):
-        return self.degree == 1 or self.degree == 0
-
-    @property
     def edges(self):
         """
         """

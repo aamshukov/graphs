@@ -230,7 +230,7 @@ class Test(unittest.TestCase):
         assert flags & Flags.GENUINE == Flags.GENUINE
         assert flags & Flags.SYNTHETIC == Flags.SYNTHETIC
 
-    def test_disjoinset_success(self):  # union find
+    def test_disjoint_set_success(self):  # union find
         elements = list('ABCDEFGHIJ')
         djs = DisjointSet(elements)
         djs.union('A', 'B')
@@ -479,6 +479,22 @@ class Test(unittest.TestCase):
         assert len(graph.vertices) == 0
         assert len(graph.edges) == 0
 
+    def test_graph_degree_success(self):
+        graph = Graph(digraph=False)
+        v1 = Vertex(1, '1', 1)
+        graph.add_vertex(v1)
+        graph.add_edge(v1, v1, 'v1-v1-0')
+        # Test.show_graph(graph)
+        assert graph.get_vertex_degree(v1) == 2
+
+    def test_digraph_degree_success(self):
+        graph = Graph(digraph=True)
+        v1 = Vertex(1, '1', 1)
+        graph.add_vertex(v1)
+        graph.add_edge(v1, v1, 'v1-v1-0')
+        # Test.show_graph(graph)
+        assert graph.get_vertex_degree(v1) == 2
+
     def test_graph_5_success(self):
         graph = Graph(digraph=False)
         v1 = Vertex(1, '1', 1)
@@ -615,7 +631,7 @@ class Test(unittest.TestCase):
         assert len(graph.vertices) == 0
         assert len(graph.edges) == 0
 
-    def test_graph_success(self):
+    def test_graph_success_random(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000

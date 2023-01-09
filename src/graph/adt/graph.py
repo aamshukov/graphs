@@ -143,6 +143,20 @@ class Graph(Entity):
         vertex_u.remove_adjacence(vertex_v, edge)  # break U -> V relation
         del self._edges[edge.id]
 
+    def get_vertex_degree(self, vertex):
+        """
+        """
+        result = len(vertex.adjacencies)
+        if self._digraph:
+            for adjacency in vertex.adjacencies:
+                if adjacency.vertex == vertex:
+                    result += 1  # loop contributes 2 to a vertex's degree
+        return result
+
+    def is_leaf(self, vertex):
+        degree = self.get_vertex_degree(vertex)
+        return degree == 1 or degree == 0
+
     def validate(self):
         """
         """

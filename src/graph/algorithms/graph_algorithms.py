@@ -111,11 +111,11 @@ class GraphAlgorithms(Base):
         Can be up to two centers.
         """
         assert not graph.digraph, "Invalid graph type, must be undirected graph."
-        roots = {v: v.degree for v in graph.vertices.values()}
+        roots = {v: graph.get_vertex_degree(v) for v in graph.vertices.values()}
         while True:
             excluded_roots = list()
             for root in roots.items():
-                if root[0].leaf or root[1] < 2:            # '< 2' because can be only up to 2 roots - alternative way
+                if graph.is_leaf(root[0]) or root[1] < 2:  # '< 2' because can be only up to 2 roots - alternative way
                     for adjacence in root[0].adjacencies:  # to find root(s) is to find the longest path and take its
                         if adjacence.vertex in roots:      # middle, the longest path might be even or odd, that's way 2
                             roots[adjacence.vertex] -= 1

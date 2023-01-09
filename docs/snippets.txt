@@ -202,3 +202,11 @@ def approximate_e(terms=18):
 
 
 
+
+
+
+    @property
+    def leaf(self):
+        return self.degree == 1 or self.degree == 0
+
+
