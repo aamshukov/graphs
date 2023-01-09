@@ -1782,7 +1782,7 @@ class Test(unittest.TestCase):
         v2.add_kid(v5)
         v4.add_kid(v6)
         # Test.show_tree(v0)
-        nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v0)
+        nodes, depths = GraphAlgorithms.calculate_euler_tour(v0)
         assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v0, v1, v3, v1, v0, v2, v4, v6, v4, v2, v5, v2, v0]
         assert depths == [0, 1, 2, 1, 0, 1, 2, 3, 2, 1, 2, 1, 0]
@@ -1803,7 +1803,7 @@ class Test(unittest.TestCase):
         v3.add_kid(v6)
         v3.add_kid(v7)
         # Test.show_tree(v1)
-        nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(v1)
+        nodes, depths = GraphAlgorithms.calculate_euler_tour(v1)
         assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v1, v2, v1, v3, v5, v3, v6, v3, v7, v3, v1, v4, v1]
         assert len(depths) == (2 * 7 - 1)
@@ -1818,7 +1818,7 @@ class Test(unittest.TestCase):
             print(f"Iteration: {k}  {now}")
             tree = Test.generate_random_tree(n)
             # Test.show_tree(tree)
-            nodes, lasts, depths = GraphAlgorithms.calculate_euler_tour(tree[0])
+            nodes, depths = GraphAlgorithms.calculate_euler_tour(tree[0])
             assert len(nodes) == (2 * n - 1)
         now = datetime.now()
         print(f"End: {now}")
