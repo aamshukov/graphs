@@ -16,6 +16,7 @@ from graph.core.colors import Colors
 from graph.core.logger import Logger
 from graph.core.text import Text
 from graph.core.domainhelper import DomainHelper
+from graph.core.algorithms import Algorithms
 from graph.adt.disjoint_set import DisjointSet
 from graph.core.value import Value
 from graph.core.entity import Entity
@@ -176,6 +177,23 @@ class Test(unittest.TestCase):
             for kid in list(adj[1]):
                 node.add_kid(nodes[kid])
         return nodes
+
+    @staticmethod
+    def generate_random_array_queries(n=3):
+        p = np.random.rand(n, n)  # your "matrix of probabilities"
+        adjacency = np.random.rand(*p.shape) <= p  # adjacency[ii, jj] is True with probability P[ii, jj]
+        nx_graph = nx.from_numpy_matrix(adjacency, nx.Graph)
+        array = list(nx_graph.nodes)
+        queries = list(nx_graph.edges)
+        random.shuffle(array)
+        return array, queries
+
+    @staticmethod
+    def generate_random_queries(n=3):
+        p = np.random.rand(n, n)
+        adjacency = np.random.rand(*p.shape) <= p
+        result = nx.from_numpy_matrix(adjacency, nx.MultiGraph)
+        return list(result)
 
     def test_logger_success(self):
         path = r'd:\tmp'
@@ -1923,6 +1941,30 @@ class Test(unittest.TestCase):
             k2 = random.randint(0, len(tree) - 1)
             tree = GraphAlgorithms.calculate_lowest_common_ancestor(tree[0], tree[k1], tree[k2])
             print(tree.id)
+        now = datetime.now()
+        print(f"End: {now}")
+
+    def test_execute_range_minimum_queries(self):
+        array = [4, 2, 3, 7, 1, 5, 3, 3, 9, 6, 7, -1, 4]
+        queries = [(2, 7), (2, 10), (5, 9), (7, 9), (1, 11), (3, 5), (10, 14)]
+        answers = Algorithms.execute_range_minimum_queries(array, queries)
+        assert answers == [(1, 4), (1, 4), (3, 6), (3, 7), (-1, 11), (1, 4), (float('-inf'), 0)]
+
+    def test_execute_range_minimum_queries_same(self):
+        array = [5, 5, 5, 5, 5, 5, 5]
+        queries = [(0, len(array) - 1)]
+        answers = Algorithms.execute_range_minimum_queries(array, queries)
+        assert answers == [(5, 0)]
+
+    def test_execute_range_minimum_queries_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 1000  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            array, queries = Test.generate_random_array_queries(n)
+            answers = Algorithms.execute_range_minimum_queries(array, queries)
         now = datetime.now()
         print(f"End: {now}")
 
