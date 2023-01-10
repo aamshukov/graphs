@@ -6,7 +6,6 @@
 import math
 from enum import IntEnum
 from functools import lru_cache
-from graph.core.domainhelper import DomainHelper
 from graph.core.base import Base
 
 

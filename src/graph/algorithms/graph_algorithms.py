@@ -262,14 +262,16 @@ class GraphAlgorithms(Base):
         nodes = list()   # array of visiting nodes, 2 * N - 1
         depths = list()  # array of depths of nodes, 2 * N - 1
         stack = [tree]   # push root
+        lasts = dict()
         depth = 0
-        k = 0
+        index = 0
         while stack:
             tree = stack[-1]  # peek
             tree.flags |= Flags.VISITED
             nodes.append(tree)
             depths.append(depth)
-            k += 1
+            lasts[tree] = index
+            index += 1
             prev_stack_len = len(stack)
             for kid in tree.kids:
                 if (kid.flags & Flags.VISITED) != Flags.VISITED:
@@ -279,7 +281,7 @@ class GraphAlgorithms(Base):
             if len(stack) == prev_stack_len:
                 stack.pop()  # nodes are removed from stack when there are no more kids to visit
                 depth -= 1
-        return nodes, depths
+        return nodes, depths, lasts
 
     @staticmethod
     def calculate_lowest_common_ancestor(tree, tree1, tree2):
@@ -289,10 +291,12 @@ class GraphAlgorithms(Base):
         LCA of the node is the node itself.
         """
         # Eulerian tour
-        nodes, depths = GraphAlgorithms.calculate_euler_tour(tree)
+        nodes, depths, lasts = GraphAlgorithms.calculate_euler_tour(tree)
         # RMQ
-        lhs = nodes.index(tree1)
-        rhs = nodes.index(tree2)
+        # lhs = nodes.index(tree1)
+        # rhs = nodes.index(tree2)
+        lhs = min(lasts[tree1], lasts[tree2])
+        rhs = max(lasts[tree1], lasts[tree2])
         if lhs > rhs:
             lhs, rhs = rhs, lhs
         sub_range = depths[lhs: rhs + 1]  # +1 - inclusive

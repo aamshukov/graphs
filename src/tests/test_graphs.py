@@ -1816,11 +1816,13 @@ class Test(unittest.TestCase):
         v2.add_kid(v5)
         v4.add_kid(v6)
         # Test.show_tree(v0)
-        nodes, depths = GraphAlgorithms.calculate_euler_tour(v0)
+        nodes, depths, lasts = GraphAlgorithms.calculate_euler_tour(v0)
         assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v0, v1, v3, v1, v0, v2, v4, v6, v4, v2, v5, v2, v0]
         assert depths == [0, 1, 2, 1, 0, 1, 2, 3, 2, 1, 2, 1, 0]
         assert len(depths) == (2 * 7 - 1)
+        assert list(lasts.values()) == [12, 3, 2, 11, 8, 7, 10]
+        assert len(lasts) == 7
 
     def test_calculate_euler_tour2(self):
         v1 = Tree(1, '1')
@@ -1837,11 +1839,13 @@ class Test(unittest.TestCase):
         v3.add_kid(v6)
         v3.add_kid(v7)
         # Test.show_tree(v1)
-        nodes, depths = GraphAlgorithms.calculate_euler_tour(v1)
+        nodes, depths, lasts = GraphAlgorithms.calculate_euler_tour(v1)
         assert len(nodes) == (2 * 7 - 1)
         assert nodes == [v1, v2, v1, v3, v5, v3, v6, v3, v7, v3, v1, v4, v1]
         assert len(depths) == (2 * 7 - 1)
         assert depths == [0, 1, 0, 1, 2, 1, 2, 1, 2, 1, 0, 1, 0]
+        assert list(lasts.values()) == [12, 1, 9, 4, 6, 8, 11]
+        assert len(lasts) == 7
 
     def test_calculate_euler_tour_random(self):
         now = datetime.now()
@@ -1852,8 +1856,9 @@ class Test(unittest.TestCase):
             print(f"Iteration: {k}  {now}")
             tree = Test.generate_random_tree(n)
             # Test.show_tree(tree)
-            nodes, depths = GraphAlgorithms.calculate_euler_tour(tree[0])
+            nodes, depths, lasts = GraphAlgorithms.calculate_euler_tour(tree[0])
             assert len(nodes) == (2 * n - 1)
+            assert len(lasts) == n
         now = datetime.now()
         print(f"End: {now}")
 
