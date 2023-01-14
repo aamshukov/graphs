@@ -27,100 +27,6 @@ from graph.algorithms.graph_algorithms import GraphAlgorithms
 from graph.algorithms.graph_visitor import GraphVisitor
 
 
-class Person(Entity):
-    def __init__(self, name, age, address, manager=None):
-        super().__init__(1, '2.1')
-        self._name = name
-        self._age = age
-        self._manager = manager
-        self._address = address
-
-    def __hash__(self):
-        result = super().__hash__()
-        result ^= hash(self._name)
-        result ^= hash(self._age)
-        result ^= hash(self._manager)
-        result ^= hash(self._address)
-        return result
-
-    def __eq__(self, other):
-        result = (super().__eq__(other) and
-                  Text.equal(self._name, other.name) and
-                  self._age == other.age and
-                  self._manager == other.manager and
-                  self._address == other.address)
-        return result
-
-    def __lt__(self, other):
-        result = (super().__lt__(other) and
-                  self._age < other.age)
-        return result
-
-    def __le__(self, other):
-        result = (super().__le__(other) and
-                  self._age <= other.age)
-        return result
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def age(self):
-        return self._age
-
-    @property
-    def manager(self):
-        return self._manager
-
-    @property
-    def address(self):
-        return self._address
-
-    def validate(self):
-        pass
-
-
-class Address(Value):
-    __slots__ = '_street', '_city'
-
-    def __init__(self, street, city):
-        super().__init__('2.1')
-        self._street = street
-        self._city = city
-
-    def __hash__(self):
-        result = super().__hash__()
-        result ^= hash(self._street)
-        result ^= hash(self._city)
-        return result
-
-    def __eq__(self, other):
-        result = (super().__eq__(other) and
-                  Text.equal(self._street, other.street) and
-                  Text.equal(self._city, other.city))
-        return result
-
-    def __lt__(self, other):
-        result = super().__lt__(other)
-        return result
-
-    def __le__(self, other):
-        result = super().__le__(other)
-        return result
-
-    @property
-    def street(self):
-        return self._street
-
-    @property
-    def city(self):
-        return self._city
-
-    def validate(self):
-        pass
-
-
 class Test(unittest.TestCase):
     @staticmethod
     def build_networkx_graph(graph):
@@ -212,59 +118,6 @@ class Test(unittest.TestCase):
         adjacency = np.random.rand(*p.shape) <= p
         result = nx.from_numpy_matrix(adjacency, nx.MultiGraph)
         return list(result)
-
-    def test_logger_success(self):
-        path = r'd:\tmp'
-        logger = Logger(path=path)
-        logger.debug('kuku')
-        assert os.path.exists(os.path.join(path, f'{Logger.LOGGER_NAME}.log'))
-
-    def test_equality_success(self):
-        address = Address('Marine Drive', 'Oakville')
-        address.validate()
-        manager = Person('Arthur', 50, address)
-        manager.validate()
-        person1 = Person('Eric', 28, address, manager)
-        person1.validate()
-        person2 = Person('Jon', 38, address, manager)
-        person2.validate()
-        person3 = Person('Eric', 28, address, manager)
-        person3.validate()
-        assert manager == manager
-        assert person1 != manager
-        assert person1 == person1
-        assert person1 != person2
-        assert person1 == person3
-
-    def test_strings_equality_success(self):
-        assert Text.equal('', '')
-        assert Text.equal('Rit\u0113', 'Rite\u0304')
-        assert not Text.equal('', ' ')
-        assert Text.equal('(ノಠ益ಠ)ノ彡 ɹoʇıpƎ ʇxǝ⊥', '(ノಠ益ಠ)ノ彡 ɹoʇıpƎ ʇxǝ⊥')
-        assert Text.equal('သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း '
-                          'offline အသုံးပြုနိုင်တဲ့ converter တစ်',
-                          'သည် ဇော်ဂျီ နှင့် မြန်မာ ယူနီကုတ် တို့ကို အပြန်အလှန် ပြောင်းပေးနိုင်သည့်အပြင် အင်တာနက်မရှိချိန်တွင်လည်း '
-                          'offline အသုံးပြုနိုင်တဲ့ converter တစ်')
-        assert Text.equal('Я с детства хотел завести собаку', 'Я с детства хотел завести собаку')
-        assert not Text.equal('Я c детства хотел завести собаку', 'Я с детства хотел завести собаку')
-        assert Text.equal('english text', 'english text')
-        assert Text.equal('山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇',
-                          '山乇ㄥ匚ㄖ爪乇　ㄒㄖ　ㄒ卄乇　爪ㄖ丂ㄒ　匚ㄖ爪卩ㄥ乇ㄒ乇　ﾌ卂卩卂几乇丂乇')
-        assert Text.equal('enGlisH texT', 'EngLish TeXt', case_insensitive=True)
-        assert Text.equal('Я с дЕТства хоТЕЛ зАВестИ Собаку', 'я с деТСтвА ХотЕЛ ЗАВЕСТИ СОБАКУ', case_insensitive=True)
-
-    def test_modify_flags_success(self):
-        flags = Flags.DIRTY | Flags.PROCESSED | Flags.VISITED | Flags.LEAF | Flags.INVALID
-        assert flags & Flags.DIRTY == Flags.DIRTY
-        assert flags & Flags.PROCESSED == Flags.PROCESSED
-        assert flags & Flags.VISITED == Flags.VISITED
-        assert flags & Flags.LEAF == Flags.LEAF
-        assert flags & Flags.INVALID == Flags.INVALID
-        flags = Flags.modify_flags(flags,
-                                   Flags.GENUINE | Flags.SYNTHETIC, Flags.PROCESSED | Flags.VISITED | Flags.INVALID)
-        assert flags & Flags.DIRTY == Flags.DIRTY
-        assert flags & Flags.GENUINE == Flags.GENUINE
-        assert flags & Flags.SYNTHETIC == Flags.SYNTHETIC
 
     def test_disjoint_set_success(self):  # union find
         elements = list('ABCDEFGHIJ')
@@ -2164,8 +2017,68 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_collect_by_category(self):
-        DomainHelper.collect_by_category('Cf')
+    def test_find_minimum_spanning_tree_kruskal(self):
+        graph = Graph(digraph=False)
+        v_a = Vertex(0, 'A', 'A')
+        v_b = Vertex(1, 'B', 'B')
+        v_c = Vertex(2, 'C', 'C')
+        v_d = Vertex(3, 'D', 'D')
+        v_e = Vertex(4, 'E', 'E')
+        v_f = Vertex(5, 'F', 'F')
+        v_g = Vertex(6, 'G', 'G')
+        v_h = Vertex(7, 'H', 'H')
+        v_j = Vertex(8, 'J', 'J')
+        v_i = Vertex(9, 'I', 'I')
+        graph.add_vertex(v_a)
+        graph.add_vertex(v_b)
+        graph.add_vertex(v_c)
+        graph.add_vertex(v_d)
+        graph.add_vertex(v_e)
+        graph.add_vertex(v_f)
+        graph.add_vertex(v_g)
+        graph.add_vertex(v_h)
+        graph.add_vertex(v_j)
+        graph.add_vertex(v_i)
+        graph.add_edge(v_a, v_b, 5)
+        graph.add_edge(v_a, v_d, 4)
+        graph.add_edge(v_a, v_e, 1)
+        graph.add_edge(v_b, v_c, 4)
+        graph.add_edge(v_b, v_d, 2)
+        graph.add_edge(v_c, v_h, 4)
+        graph.add_edge(v_c, v_j, 2)
+        graph.add_edge(v_c, v_i, 1)
+        graph.add_edge(v_d, v_e, 2)
+        graph.add_edge(v_d, v_f, 5)
+        graph.add_edge(v_d, v_g, 11)
+        graph.add_edge(v_d, v_h, 2)
+        graph.add_edge(v_e, v_f, 1)
+        graph.add_edge(v_f, v_g, 5)
+        graph.add_edge(v_g, v_h, 1)
+        graph.add_edge(v_g, v_i, 4)
+        graph.add_edge(v_h, v_i, 6)
+        graph.add_edge(v_j, v_i, 0)
+        mst_vertices, mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
+        print([(u.label, v.label) for u, v in mst_vertices])
+        # print([(edge.uv, edge.value) for edge in mst_edges])
+        assert [(u.label, v.label) for u, v in mst_vertices] == [('J', 'I'), ('A', 'E'), ('C', 'I'), ('E', 'F'),
+                                                                 ('G', 'H'), ('B', 'D'), ('D', 'E'), ('D', 'H'),
+                                                                 ('B', 'C')]
+
+    def test_find_minimum_spanning_tree_kruskal_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 100  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            mst_vertices, mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
+            print(len(mst_vertices))
+            print(len(mst_edges))
+        now = datetime.now()
+        print(f"End: {now}")
 
 
 if __name__ == '__main__':

@@ -34,8 +34,8 @@ class DisjointSet(Base):
     def find(self, element):
         """
         """
-        r = self._mapping[element]   # get index
-        while r != self._parents[r]: # locate root
+        r = self._mapping[element]    # get index
+        while r != self._parents[r]:  # locate root
             self._parents[r] = self._parents[self._parents[r]]  # path compression by halving, full path compression
             r = self._parents[r]                                # is more involving another loop from
         return r                                                # the original element and up to the root

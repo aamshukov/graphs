@@ -68,6 +68,12 @@ class Edge(Entity):
         return self._endpoints
 
     @property
+    def uv(self):
+        """
+        """
+        return self._endpoints[0], self._endpoints[1]
+
+    @property
     def value(self):
         """
         """

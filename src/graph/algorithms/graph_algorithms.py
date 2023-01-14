@@ -10,6 +10,7 @@ from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.core.domainhelper import DomainHelper
 from graph.core.base import Base
+from graph.adt.disjoint_set import DisjointSet
 
 
 class GraphAlgorithms(Base):
@@ -354,3 +355,22 @@ class GraphAlgorithms(Base):
                 path.append(prev_vertex)
                 prev_vertex = prev_vertices[prev_vertex]
         return reversed(path), dst_distance
+
+    @staticmethod
+    def find_minimum_spanning_tree_kruskal(graph):
+        """
+        Kruskal's algorithm to find Minimum Spanning Tree (MSP) using Union Find technique.
+        """
+        edges = [edge for edge in sorted(graph.edges.values(), key=lambda edge: edge.value)]
+        djs = DisjointSet(graph.vertices.values())
+        mst_vertices = list()
+        mst_edges = list()
+        for edge in edges:
+            u, v = edge.uv
+            if djs.find(u) != djs.find(v):
+                djs.union(u, v)
+                mst_vertices.append((u, v))
+                mst_edges.append(edge)
+            if djs.count == 1:  # all vertices have been unified
+                break
+        return mst_vertices, mst_edges
