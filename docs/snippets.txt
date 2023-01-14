@@ -216,3 +216,14 @@ def approximate_e(terms=18):
 a = [[0 for column in range(columns)] for row in range(rows)]
 a = [[0] * cols for _ in range(rows)]
 
+
+
+import heapq
+pqueue = list()  # priority queue
+heapq.heappush(pqueue, (10, 'v2'))
+heapq.heappush(pqueue, (10, 'v1'))
+heapq.heappush(pqueue, (0, 'v3'))
+value, vertex = heapq.heappop(pqueue)
+value, vertex
+
+

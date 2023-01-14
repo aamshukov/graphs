@@ -51,6 +51,16 @@ class Person(Entity):
                   self._address == other.address)
         return result
 
+    def __lt__(self, other):
+        result = (super().__lt__(other) and
+                  self._age < other.age)
+        return result
+
+    def __le__(self, other):
+        result = (super().__le__(other) and
+                  self._age <= other.age)
+        return result
+
     @property
     def name(self):
         return self._name
@@ -89,6 +99,14 @@ class Address(Value):
         result = (super().__eq__(other) and
                   Text.equal(self._street, other.street) and
                   Text.equal(self._city, other.city))
+        return result
+
+    def __lt__(self, other):
+        result = super().__lt__(other)
+        return result
+
+    def __le__(self, other):
+        result = super().__le__(other)
         return result
 
     @property
@@ -162,7 +180,7 @@ class Test(unittest.TestCase):
             result.add_vertex(v)
         for edge in nx_graph.edges:
             u, v = edge
-            result.add_edge(vertices[u], vertices[v])
+            result.add_edge(vertices[u], vertices[v], random.randint(0, n))
         return result
 
     @staticmethod
@@ -1996,6 +2014,158 @@ class Test(unittest.TestCase):
             answers = Algorithms.execute_range_minmax_queries(array, queries, function=Algorithms.Functions.MAX)
         now = datetime.now()
         print(f"End: {now}")
+
+    @staticmethod
+    def graph_cleanup(graph):
+        for vertex in graph.vertices.values():
+            vertex.flags = Flags.CLEAR
+
+    def test_calculate_shortest_distances_dijkstra(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_edge(v0, v1, 4)
+        graph.add_edge(v0, v2, 1)
+        graph.add_edge(v1, v3, 1)
+        graph.add_edge(v2, v1, 2)
+        graph.add_edge(v2, v3, 5)
+        graph.add_edge(v3, v4, 3)
+        # Test.show_graph(graph)
+        distances, prev_vertices, _ = GraphAlgorithms.calculate_shortest_distances_dijkstra(v0)
+        assert len(distances) == 5
+        assert distances == {v0: 0, v1: 3, v2: 1, v3: 4, v4: 7}
+        assert len(prev_vertices) == 4
+        assert prev_vertices == {v1: v2, v2: v0, v3: v1, v4: v3}
+        Test.graph_cleanup(graph)
+        distances, prev_vertices, dst_distance = GraphAlgorithms.calculate_shortest_distances_dijkstra(v0,
+                                                                                                       dst_vertex=v2)
+        assert distances == {v0: 0, v1: 3, v2: 1, v3: 6}
+        assert prev_vertices == {v1: v2, v2: v0, v3: v2}
+        assert dst_distance == 1
+
+    def test_find_shortest_distances_dijkstra(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_edge(v0, v1, 4)
+        graph.add_edge(v0, v2, 1)
+        graph.add_edge(v1, v3, 1)
+        graph.add_edge(v2, v1, 2)
+        graph.add_edge(v2, v3, 5)
+        graph.add_edge(v3, v4, 3)
+        # Test.show_graph(graph)
+        path, dst_distance = GraphAlgorithms.find_shortest_distance_dijkstra(v0, v4)
+        path = [vertex for vertex in path]
+        assert len(path) == 5
+        assert path == [v0, v2, v1, v3, v4]
+        assert dst_distance == 7
+
+    def test_calculate_shortest_distances_dijkstra2(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_edge(v0, v1, 5)
+        graph.add_edge(v0, v2, 1)
+        graph.add_edge(v1, v2, 2)
+        graph.add_edge(v1, v3, 3)
+        graph.add_edge(v1, v4, 20)
+        graph.add_edge(v2, v1, 3)
+        graph.add_edge(v2, v4, 12)
+        graph.add_edge(v3, v2, 3)
+        graph.add_edge(v3, v4, 2)
+        graph.add_edge(v3, v5, 6)
+        graph.add_edge(v4, v5, 1)
+        # Test.show_graph(graph)
+        distances, prev_vertices, _ = GraphAlgorithms.calculate_shortest_distances_dijkstra(v0)
+        assert len(distances) == 6
+        assert distances == {v0: 0, v1: 4, v2: 1, v3: 7, v4: 9, v5: 10}
+        assert len(prev_vertices) == 5
+        assert prev_vertices == {v1: v2, v2: v0, v3: v1, v4: v3, v5: v4}
+        Test.graph_cleanup(graph)
+        distances, prev_vertices, dst_distance = GraphAlgorithms.calculate_shortest_distances_dijkstra(v0,
+                                                                                                       dst_vertex=v2)
+        assert distances == {v0: 0, v1: 4, v2: 1, v4: 13}
+        assert prev_vertices == {v1: v2, v2: v0, v4: v2}
+        assert dst_distance == 1
+
+    def test_find_shortest_distances_dijkstra2(self):
+        graph = Graph(digraph=True)
+        v0 = Vertex(0, '0', 0)
+        v1 = Vertex(1, '1', 1)
+        v2 = Vertex(2, '2', 2)
+        v3 = Vertex(3, '3', 3)
+        v4 = Vertex(4, '4', 4)
+        v5 = Vertex(5, '5', 5)
+        graph.add_vertex(v0)
+        graph.add_vertex(v1)
+        graph.add_vertex(v2)
+        graph.add_vertex(v3)
+        graph.add_vertex(v4)
+        graph.add_vertex(v5)
+        graph.add_edge(v0, v1, 5)
+        graph.add_edge(v0, v2, 1)
+        graph.add_edge(v1, v2, 2)
+        graph.add_edge(v1, v3, 3)
+        graph.add_edge(v1, v4, 20)
+        graph.add_edge(v2, v1, 3)
+        graph.add_edge(v2, v4, 12)
+        graph.add_edge(v3, v2, 3)
+        graph.add_edge(v3, v4, 2)
+        graph.add_edge(v3, v5, 6)
+        graph.add_edge(v4, v5, 1)
+        # Test.show_graph(graph)
+        path, dst_distance = GraphAlgorithms.find_shortest_distance_dijkstra(v0, v5)
+        path = [vertex for vertex in path]
+        assert len(path) == 6
+        assert path == [v0, v2, v1, v3, v4, v5]
+        assert dst_distance == 10
+
+    def test_find_shortest_distances_dijkstra_random(self):
+        now = datetime.now()
+        print(f"Start: {now}")
+        n = 100  # watch recursion
+        for k in range(100):
+            now = datetime.now()
+            print(f"Iteration: {k}  {now}")
+            graph = Test.generate_random_graph(n, digraph=True)
+            vertices = list(graph.vertices.values())
+            print(f"Vertices collected ... {len(graph.vertices)}")
+            print(f"Edges collected ... {len(graph.edges)}")
+            src_vertex = random.choice(vertices)
+            dst_vertex = random.choice(vertices)
+            path, dst_distance = GraphAlgorithms.find_shortest_distance_dijkstra(src_vertex, dst_vertex)
+            print(f"{src_vertex.id}:{dst_vertex.id}:{len([_ for _ in path])}:{dst_distance}")
+        now = datetime.now()
+        print(f"End: {now}")
+
+    def test_collect_by_category(self):
+        DomainHelper.collect_by_category('Cf')
 
 
 if __name__ == '__main__':

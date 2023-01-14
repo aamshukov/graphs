@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Graph algorithms """
+import heapq
 from collections import defaultdict
 from operator import itemgetter
 from graph.core.flags import Flags
@@ -57,7 +58,7 @@ class GraphAlgorithms(Base):
         return set(result)
 
     @staticmethod
-    def dfs(start_vertex, *args, **kwargs):
+    def dfs(start_vertex, action=None, *args, **kwargs):
         """
         """
         stack = list()
@@ -66,6 +67,8 @@ class GraphAlgorithms(Base):
             vertex = stack.pop()
             if (vertex.flags & Flags.VISITED) == Flags.VISITED:
                 continue
+            if action:
+                action(vertex)
             vertex.flags = Flags.modify_flags(vertex.flags, Flags.VISITED, Flags.CLEAR)
             yield vertex
             for adjacence in vertex.adjacencies:
@@ -302,3 +305,52 @@ class GraphAlgorithms(Base):
         sub_range = depths[lhs: rhs + 1]  # +1 - inclusive
         position = lhs + min(enumerate(sub_range), key=itemgetter(1))[0]
         return nodes[position]
+
+    @staticmethod
+    def calculate_shortest_distances_dijkstra(src_vertex, dst_vertex=None):
+        """
+        Calculates the shortest distances to every vertex from the given vertex.
+        Also returns previously visited vertices to reconstruct paths.
+        Based on:
+        https://www.youtube.com/watch?v=pSqmAO-m7Lk&list=PLDV1Zeh2NRsDGO4--qE8yH72HFL1Km93P&index=18
+        """
+        dst_distance = DomainHelper.get_max_int()
+        distances = defaultdict(lambda: DomainHelper.get_max_int())
+        distances[src_vertex] = 0
+        prev_vertices = defaultdict(lambda: None)
+        pqueue = list()  # priority queue
+        heapq.heappush(pqueue, (0, src_vertex))
+        while pqueue:
+            min_value, vertex = heapq.heappop(pqueue)
+            vertex.flags |= Flags.VISITED
+            if distances[vertex] < min_value:  # optimization, if value already better
+                continue
+            for adjacency in vertex.adjacencies:
+                if (adjacency.vertex.flags & Flags.VISITED) == Flags.VISITED:
+                    continue
+                distance = distances[vertex] + adjacency.edge.value  # new distance
+                if distance < distances[adjacency.vertex]:
+                    distances[adjacency.vertex] = distance
+                    prev_vertices[adjacency.vertex] = vertex
+                    heapq.heappush(pqueue, (distance, adjacency.vertex))
+            if dst_vertex and dst_vertex == vertex:  # if vertex already processed its distance is not changed, get it
+                dst_distance = distances[dst_vertex]
+                break
+        return distances, prev_vertices, dst_distance
+
+    @staticmethod
+    def find_shortest_distance_dijkstra(src_vertex, dst_vertex):
+        """
+        See calculate_shortest_distances_dijkstra.
+        """
+        _, prev_vertices, dst_distance = GraphAlgorithms.calculate_shortest_distances_dijkstra(src_vertex, dst_vertex)
+        path = list()
+        if dst_distance != DomainHelper.get_max_int():  # check if start and end vertices disconnected
+            path.append(dst_vertex)
+            prev_vertex = prev_vertices[dst_vertex]
+            while True:
+                if not prev_vertex:
+                    break
+                path.append(prev_vertex)
+                prev_vertex = prev_vertices[prev_vertex]
+        return reversed(path), dst_distance

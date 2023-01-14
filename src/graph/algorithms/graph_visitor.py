@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" Depth First Search () DFS visitor"""
+""" Depth First Search () DFS visitor """
 from abc import abstractmethod
 from graph.patterns.visitor import Visitor
 

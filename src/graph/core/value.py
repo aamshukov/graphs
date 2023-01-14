@@ -29,7 +29,22 @@ class Value(Equatable):
     def __eq__(self, other):
         """
         """
-        result = super().__eq__(other) and Text.equal(self._version, other.version)
+        result = (super().__eq__(other) and
+                  Text.equal(self._version, other.version))
+        return result
+
+    @abstractmethod
+    def __lt__(self, other):
+        """
+        """
+        result = super().__lt__(other)
+        return result
+
+    @abstractmethod
+    def __le__(self, other):
+        """
+        """
+        result = super().__le__(other)
         return result
 
     @property

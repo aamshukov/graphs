@@ -28,7 +28,24 @@ class Entity(Value):
     def __eq__(self, other):
         """
         """
-        result = super().__eq__(other) and self._id == other.id
+        result = (super().__eq__(other) and
+                  self._id == other.id)
+        return result
+
+    @abstractmethod
+    def __lt__(self, other):
+        """
+        """
+        result = (super().__lt__(other) and
+                  self._id < other.id)
+        return result
+
+    @abstractmethod
+    def __le__(self, other):
+        """
+        """
+        result = (super().__le__(other) and
+                  self._id <= other.id)
         return result
 
     @property

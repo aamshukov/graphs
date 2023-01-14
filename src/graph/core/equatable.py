@@ -18,30 +18,26 @@ class Equatable(Base):
     def __hash__(self):
         """
         """
-        result = hash(0)
-        # components = Equatable.collect_equality_components(self)
-        # for component in components:
-        #     result ^= hash(component)
+        result = super().__hash__()
         return result
 
     @abstractmethod
     def __eq__(self, other):
         """
         """
-        result = True
-        # if not result:
-        #     pass
-        #     # result = isinstance(other, Equatable)
-        #     # if result:
-        #     #     lhs = Equatable.collect_equality_components(self)
-        #     #     rhs = Equatable.collect_equality_components(other)
-        #     #     result = len(lhs) == len(rhs)
-        #     #     if result:
-        #     #         for lhs_item, rhs_item in zip(lhs, rhs):
-        #     #             if lhs_item != rhs_item:
-        #     #                 result = False
-        #     #                 break
-        return result
+        return True
+
+    @abstractmethod
+    def __lt__(self, other):
+        """
+        """
+        return True
+
+    @abstractmethod
+    def __le__(self, other):
+        """
+        """
+        return True
 
     @staticmethod
     def collect_equality_components(obj):

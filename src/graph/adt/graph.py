@@ -36,12 +36,22 @@ class Graph(Entity):
     def __hash__(self):
         """
         """
-        raise NotImplemented
+        return super().__hash__()
 
     def __eq__(self, other):
         """
         """
-        raise NotImplemented
+        return super().__eq__(other)
+
+    def __lt__(self, other):
+        """
+        """
+        return super().__lt__(other)
+
+    def __le__(self, other):
+        """
+        """
+        return super().__le__(other)
 
     @property
     def root(self):

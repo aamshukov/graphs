@@ -58,6 +58,20 @@ class Tree(Entity, Visitable):
                   tuple(self._kids) == tuple(other.kids))
         return result
 
+    def __lt__(self, other):
+        """
+        """
+        result = (super().__lt__(other) and
+                  self._value < other.value)
+        return result
+
+    def __le__(self, other):
+        """
+        """
+        result = (super().__le__(other) and
+                  self._value <= other.value)
+        return result
+
     @property
     def label(self):
         """
