@@ -363,8 +363,6 @@ class GraphAlgorithms(Base):
         """
         edges = [edge for edge in sorted(graph.edges.values(), key=lambda edge: edge.value)]
         djs = DisjointSet(graph.vertices.values())
-        mst_vertices = list()
-        mst_edges = list()
         for edge in edges:
             u, v = edge.uv
             if djs.find(u) != djs.find(v):
