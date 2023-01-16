@@ -369,8 +369,6 @@ class GraphAlgorithms(Base):
             u, v = edge.uv
             if djs.find(u) != djs.find(v):
                 djs.union(u, v)
-                mst_vertices.append((u, v))
-                mst_edges.append(edge)
+                yield edge
             if djs.count == 1:  # all vertices have been unified
                 break
-        return mst_vertices, mst_edges

@@ -2057,12 +2057,11 @@ class Test(unittest.TestCase):
         graph.add_edge(v_g, v_i, 4)
         graph.add_edge(v_h, v_i, 6)
         graph.add_edge(v_j, v_i, 0)
-        mst_vertices, mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
-        print([(u.label, v.label) for u, v in mst_vertices])
-        # print([(edge.uv, edge.value) for edge in mst_edges])
-        assert [(u.label, v.label) for u, v in mst_vertices] == [('J', 'I'), ('A', 'E'), ('C', 'I'), ('E', 'F'),
-                                                                 ('G', 'H'), ('B', 'D'), ('D', 'E'), ('D', 'H'),
-                                                                 ('B', 'C')]
+        mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
+        mst = [(edge.endpoints[0].label, edge.endpoints[1].label, edge.value) for edge in mst_edges]
+        print(mst)
+        assert mst == [('J', 'I', 0), ('A', 'E', 1), ('C', 'I', 1), ('E', 'F', 1), ('G', 'H', 1), ('B', 'D', 2),
+                       ('D', 'E', 2), ('D', 'H', 2), ('B', 'C', 4)]
 
     def test_find_minimum_spanning_tree_kruskal_random(self):
         now = datetime.now()
@@ -2074,9 +2073,9 @@ class Test(unittest.TestCase):
             graph = Test.generate_random_graph(n, digraph=True)
             print(f"Vertices collected ... {len(graph.vertices)}")
             print(f"Edges collected ... {len(graph.edges)}")
-            mst_vertices, mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
-            print(len(mst_vertices))
-            print(len(mst_edges))
+            mst_edges = GraphAlgorithms.find_minimum_spanning_tree_kruskal(graph)
+            mst = [(edge.endpoints[0].label, edge.endpoints[1].label, edge.value) for edge in mst_edges]
+            print(len(mst))
         now = datetime.now()
         print(f"End: {now}")
 
