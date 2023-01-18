@@ -141,3 +141,6 @@ tmp/
 .vs/
 TestResults/
 .pytest_cache/
+
+docs/snippets.txt
+
