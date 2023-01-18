@@ -13,13 +13,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 from graph.core.flags import Flags
 from graph.core.colors import Colors
-from graph.core.logger import Logger
-from graph.core.text import Text
 from graph.core.domainhelper import DomainHelper
-from graph.core.algorithms import Algorithms
+from graph.algorithms.algorithms import Algorithms
 from graph.adt.disjoint_set import DisjointSet
-from graph.core.value import Value
-from graph.core.entity import Entity
 from graph.adt.vertex import Vertex
 from graph.adt.graph import Graph
 from graph.adt.tree import Tree

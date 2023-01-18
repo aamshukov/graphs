@@ -2,7 +2,7 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" Graph data type """
+""" Graph string type """
 import numpy as np
 from graph.core.entity import Entity
 from graph.adt.edge import Edge
