@@ -19,7 +19,6 @@ class SuffixArray(Base):
     def build_suffix_array(string):
         """
         Naive and slow Suffix Array (SA) construction implementation.
-        Based on https://zork.net/~st/jottings/sais.html#lms-substrings
         """
         suffixes = []
         string = string + '\0'  # includes virtual sentinel (empty suffix)

@@ -38,15 +38,15 @@ class Test(unittest.TestCase):
         lcp = SuffixArray.build_longest_common_prefix(string, sa)
         assert lcp == [0, 1, 4, 1, 1, 0, 3, 0, 0, 0, 2, 0]
 
+    def test_naive_implementation_mmiissiissiippii_success(self):
+        string = 'mmiissiissiippii'
+        sa = SuffixArray.build_suffix_array(string)
+        assert sa == [16, 15, 14, 10, 6, 2, 11, 7, 3, 1, 0, 13, 12, 9, 5, 8, 4]
+        lcp = SuffixArray.build_longest_common_prefix(string, sa)
+        assert lcp == [0, 1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4, 0]
+
     def test_build_suffix_array_induced_sorting_cabbage_success(self):
         string = 'cabbage'
-        sa = SuffixArray.build_suffix_array_induced_sorting(string)
-        assert sa == [7, 1, 4, 3, 2, 0, 6, 5]
-        lcp = SuffixArray.build_longest_common_prefix(string, sa)
-        assert lcp == [0, 1, 0, 1, 0, 0, 0, 0]
-
-    def test_build_suffix_array_induced_sorting_mmiissiissiippii_success(self):
-        string = 'mmiissiissiippii'
         sa = SuffixArray.build_suffix_array_induced_sorting(string)
         assert sa == [7, 1, 4, 3, 2, 0, 6, 5]
         lcp = SuffixArray.build_longest_common_prefix(string, sa)
@@ -58,6 +58,27 @@ class Test(unittest.TestCase):
         assert sa == [17, 11, 5, 16, 10, 4, 13, 7, 1, 15, 9, 3, 14, 8, 2, 0, 12, 6]
         lcp = SuffixArray.build_longest_common_prefix(string, sa)
         assert lcp == [0, 5, 0, 0, 6, 1, 3, 9, 0, 1, 7, 1, 2, 8, 0, 0, 4, 0]
+
+    def test_build_suffix_array_induced_sorting_baabaabac_success(self):
+        string = 'baabaabac'
+        sa = SuffixArray.build_suffix_array_induced_sorting(string)
+        assert sa == [9, 1, 4, 2, 5, 7, 0, 3, 6, 8]
+        lcp = SuffixArray.build_longest_common_prefix(string, sa)
+        assert lcp == [0, 4, 1, 3, 1, 0, 5, 2, 0, 0]
+
+    def test_build_suffix_array_induced_sorting_abracadabra_success(self):
+        string = 'abracadabra'
+        sa = SuffixArray.build_suffix_array_induced_sorting(string)
+        assert sa == [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
+        lcp = SuffixArray.build_longest_common_prefix(string, sa)
+        assert lcp == [0, 1, 4, 1, 1, 0, 3, 0, 0, 0, 2, 0]
+
+    def test_build_suffix_array_induced_sorting_mmiissiissiippii_success(self):
+        string = 'mmiissiissiippii'
+        sa = SuffixArray.build_suffix_array_induced_sorting(string)
+        assert sa == [16, 15, 14, 10, 6, 2, 11, 7, 3, 1, 0, 13, 12, 9, 5, 8, 4]
+        lcp = SuffixArray.build_longest_common_prefix(string, sa)
+        assert lcp == [0, 1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4, 0]
 
 
 if __name__ == '__main__':
