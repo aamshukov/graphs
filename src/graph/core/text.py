@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ String extensions """
+import ctypes
 import functools
 from unicodedata import normalize
 from graph.core.base import Base
@@ -23,3 +24,18 @@ class Text(Base):
             return nfc(lhs).casefold() == nfc(rhs).casefold()
         else:
             return nfc(lhs) == nfc(rhs)
+
+    class PyUnicodeObject(ctypes.Structure):
+        """
+        """
+        PyUnicode_WCHAR_KIND = 0
+        PyUnicode_1BYTE_KIND = 1
+        PyUnicode_2BYTE_KIND = 2
+        PyUnicode_4BYTE_KIND = 4
+        _fields_ = (('kind', ctypes.c_uint, 3), )
+
+    @staticmethod
+    def get_string_kind(string):
+        """
+        """
+        return Text.PyUnicodeObject.from_address(id(string)).kind

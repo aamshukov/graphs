@@ -163,6 +163,18 @@ class Test(unittest.TestCase):
     def test_collect_by_category(self):
         DomainHelper.collect_by_category('Cf')
 
+    def test_string_kind(self):
+        kind = Text.get_string_kind('a')
+        assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+        kind = Text.get_string_kind('Я')
+        assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+        kind = Text.get_string_kind('爪')
+        assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+        kind = Text.get_string_kind('🐍')
+        assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+        kind = Text.get_string_kind('သည်')
+        assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+
 
 if __name__ == '__main__':
     """

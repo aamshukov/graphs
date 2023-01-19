@@ -41,6 +41,8 @@ class SuffixArray(Base):
         string_len = len(string)
 
         class SuffixType(str, Enum):
+            """
+            """
             S = 'S',
             L = 'L'
 
@@ -142,10 +144,51 @@ class SuffixArray(Base):
                     k += 1  # advance to the next element
             return result
 
+        class Bucket(object):
+            """
+            """
+            def __init__(self):
+                self.size = 0
+                self.head = 0
+                self.tail = 0
+                self.char = 0
+
+            def __repr__(self):
+                """
+                """
+                return f"({self.size},{self.head},{self.tail},{self.char})"
+            __str__ = __repr__
+
+        def build_buckets(abc_size=128):
+            result = [Bucket() for _ in range(abc_size)]
+            # collect stats
+            for ch in string:
+                k = ord(ch)
+                result[k].size += 1
+                result[k].char = ch
+            # calculate heads
+            offset = 0
+            for bucket in result:
+                bucket.head = offset
+                offset += bucket.size
+            # calculate tails
+            offset = 0
+            for bucket in result:
+                offset += bucket.size
+                bucket.tail = offset - 1
+            return result
+
         sa = []
         classification = classify_suffixes()
         print_classification(classification)
+        buckets = build_buckets()
+        print([bucket for bucket in buckets if bucket.char != 0])
         return sa
+
+    @staticmethod
+    def collect_suffixes(string, suffixes):
+        for suffix in suffixes:
+            yield suffix, string[suffix:]
 
     @staticmethod
     def build_longest_common_prefix(string, suffixes):
