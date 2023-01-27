@@ -5,6 +5,8 @@
 """ String extensions """
 import ctypes
 import functools
+import random
+import string
 from unicodedata import normalize
 from graph.core.base import Base
 
@@ -93,3 +95,10 @@ class Text(Base):
         for k, string in enumerate(strings):
             result += string + chr(k)
         return result
+
+    @staticmethod
+    def generate_random_string(length):
+        """
+        """
+        data = string.printable
+        return ''.join(random.choice(data) for i in range(length))

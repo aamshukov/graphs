@@ -18,18 +18,18 @@ class SuffixArray(Base):
         """
         suffixes = []
         string = string + '\0'  # includes virtual sentinel (empty suffix)
-        len_string = len(string)
-        for offset in range(len_string):
+        string_len = len(string)
+        for offset in range(string_len):
             suffixes.append(string[offset:])
         suffixes.sort()
         suffix_array = []
         for suffix in suffixes:
-            offset = len_string - len(suffix)
+            offset = string_len - len(suffix)
             suffix_array.append(offset)
         return suffix_array
 
     @staticmethod
-    def build_suffix_array_induced_sorting(string):
+    def build_suffix_array_induced_sorting(text):
         """
         Suffix Array Induced-Sorting (SA-IS) algorithm implementation.
         This is Python implementation of C++ code (see algorithms project) based on
@@ -37,9 +37,6 @@ class SuffixArray(Base):
               Data Compression Conference, 2009
           II. and on awesome explanation https://zork.net/~st/jottings/sais.html (thanks!)
         """
-        string = string + '\0'  # includes virtual sentinel (empty suffix)
-        string_len = len(string)
-
         class SuffixType(str, Enum):
             """
             """
@@ -47,7 +44,7 @@ class SuffixArray(Base):
             S = 'S',
             L = 'L'
 
-        def classify_suffixes():
+        def classify_suffixes(string):
             """
             Builds S/L-type map (classifies suffixes)
             t: array [0 ... n] of booleans to represent the S-type and L-type vector,
@@ -58,18 +55,18 @@ class SuffixArray(Base):
             (and so must appear closer to the start of the finished suffix array) and L-type suffixes
             are larger than the suffix to their right (and so appear closer to the end).
             """
-            result = [SuffixType.U] * string_len
+            result = [SuffixType.U] * len(string)
             # the last suffix suf(S, n −1) (after the last character) consisting of
             # only the single character $ or 0 (the sentinel) is defined as S-type.
             result[-1] = SuffixType.S
-            if string_len > 1:
+            if len(string) > 1:
                 # the suffix containing only the last character (the last before virtual sentinel)
                 # must necessarily be larger than the empty suffix, so it is L-type.
                 result[-2] = SuffixType.L
                 # properties:
                 #  (i)  S[i] is S-type if (i.1)  S[i] < S[i + 1] or (i.2)  S[i] = S[i + 1] and suf(S, i + 1) is S-type
                 #  (ii) S[i] is L-type if (ii.1) S[i] > S[i + 1] or (ii.2) S[i] = S[i + 1] and suf(S, i + 1) is L-type
-                for k in range(string_len - 2, -1, -1):  # right to left
+                for k in range(len(string) - 2, -1, -1):  # right to left
                     if string[k] > string[k + 1]:
                         result[k] = SuffixType.L
                     elif string[k] == string[k + 1] and result[k + 1] == SuffixType.L:
@@ -78,15 +75,15 @@ class SuffixArray(Base):
                         result[k] = SuffixType.S
             return result
 
-        def classification_to_string(lms_classification):
+        def classification_to_string(classification):
             """
             """
-            part1 = ''.join(str(e.value) for e in lms_classification)
-            part2 = ''.join('^' if is_left_most_s_char(k, lms_classification)
-                            else ' ' for k in range(len(lms_classification)))
+            part1 = ''.join(str(e.value) for e in classification)
+            part2 = ''.join('^' if is_left_most_s_char(k, classification)
+                            else ' ' for k in range(len(classification)))
             return f"\n{part1}\n{part2}"
 
-        def is_left_most_s_char(index, lms_classification):
+        def is_left_most_s_char(index, classification):
             """
             True if the char at index = i is a left-most S-type (LMS)
             if i == 0 -> true
@@ -115,11 +112,12 @@ class SuffixArray(Base):
               ^   ^   ^     ^
             """
             return (index > 0 and
-                    lms_classification[index] == SuffixType.S and
-                    lms_classification[index - 1] == SuffixType.L)
+                    classification[index] == SuffixType.S and
+                    classification[index - 1] == SuffixType.L)
 
-        def lms_substrings_are_equal(lms_classification,
-                                     index_a,   # first string start offset/index
+        def lms_substrings_are_equal(string,
+                                     classification,
+                                     index_a,  # first string start offset/index
                                      index_b):  # second string start offset/index
             """
             An "LMS substring" is a portion of the input string starting at one LMS character and
@@ -132,13 +130,14 @@ class SuffixArray(Base):
             ...
             """
             result = False
-            if index_a < string_len and index_b < string_len:
+            string_len = len(string)
+            if index_a < string_len - 1 and index_b < string_len - 1:  # -1 exclude sentinel
                 k = 0  # if progressed
                 while True:
-                    a_is_lms = is_left_most_s_char(k + index_a, lms_classification)
-                    b_is_lms = is_left_most_s_char(k + index_b, lms_classification)
+                    a_is_lms = is_left_most_s_char(k + index_a, classification)
+                    b_is_lms = is_left_most_s_char(k + index_b, classification)
                     #  found start of the next LMS substrings ...
-                    if k > 0 and a_is_lms and b_is_lms:  # ... and at least one element progressed
+                    if k > 0 and a_is_lms and b_is_lms:
                         result = True
                         break
                     if a_is_lms != b_is_lms:  # LMS mismatch
@@ -165,15 +164,14 @@ class SuffixArray(Base):
                 return f"({self.size},{self.head},{self.tail},{self.char})"
             __str__ = __repr__
 
-        def build_buckets(abc_size=128):
+        def build_buckets(string, abc_size):
             """
             """
             result = [Bucket() for _ in range(abc_size)]
             # collect stats
-            for ch in string:
-                k = ord(ch)
+            for k in string:
                 result[k].size += 1
-                result[k].char = ch
+                result[k].char = chr(k)
             # calculate heads
             offset = 0
             for bucket in result:
@@ -188,32 +186,31 @@ class SuffixArray(Base):
                     bucket.tail = offset - 1
             return result
 
-        def get_bucket_sizes(sort_buckets):
+        def get_bucket_heads(buckets):
             """
             """
-            return [bucket.size for bucket in sort_buckets]
+            return [bucket.head for bucket in buckets]
 
-        def get_bucket_heads(sort_buckets):
+        def get_bucket_tails(buckets):
             """
             """
-            return [bucket.head for bucket in sort_buckets]
+            return [bucket.tail for bucket in buckets]
 
-        def get_bucket_tails(sort_buckets):
+        def suffix_array_to_string(suffixes,  # suffix array
+                                   position=None):
             """
             """
-            return [bucket.tail for bucket in sort_buckets]
-
-        def suffix_array_to_string(suffix_array, position=None):
-            """
-            """
-            assert position < len(suffix_array) if position is not None else True
-            part1 = ' '.join(f'{e:02d}' for e in suffix_array)
+            assert position < len(suffixes) if position is not None else True
+            part1 = ' '.join(f'{e:02d}' for e in suffixes)
             part2 = ''
             if position is not None:
-                part2 = ' '.join('^^' if e == position else '  ' for e in range(len(suffix_array)))
+                part2 = ' '.join('^^' if e == position else '  ' for e in range(len(suffixes)))
             return f"\n{part1}\n{part2}"
 
-        def place_lms_suffixes(lms_classification, sort_buckets, show=False):
+        def place_lms_suffixes(string,
+                               classification,
+                               buckets,
+                               show=False):
             """
             Puts all LMS suffixes into their appropriate bucket (at the end)
             05 Bucket: $    i                         m       p       s
@@ -222,73 +219,173 @@ class SuffixArray(Base):
                                              |  | second insertion
                                              | third insertion
             """
-            result = [-1] * string_len  # LMS suffixes
-            tails = get_bucket_tails(sort_buckets)
-            for k in range(string_len - 1):  # -1 for excluding virtual sentinel
-                if not is_left_most_s_char(k, lms_classification):
+            result = [-1] * len(string)  # LMS suffixes
+            tails = get_bucket_tails(buckets)
+            for k in range(len(string) - 1):  # -1 for excluding virtual sentinel
+                if not is_left_most_s_char(k, classification):
                     continue  # not start of LMX suffix
-                index = ord(string[k])  # bucket index
-                result[tails[index]] = k
-                tails[index] -= 1  # move tail index backward to insert the next element
-                if show:           # in front of the last inserted element
+                bucket_index = string[k]
+                result[tails[bucket_index]] = k
+                tails[bucket_index] -= 1  # move tail index backward to insert the next element
+                if show:                  # in front of the last inserted element
                     print(suffix_array_to_string(result))
-            result[0] = string_len - 1  # set the single sentinel LMS-substring, -1 for excluding virtual sentinel
+            result[0] = len(string) - 1  # set the single sentinel LMS-substring, -1 for excluding virtual sentinel
             if show:
                 print(suffix_array_to_string(result))
             return result
 
-        def induce_sort_l_type_suffixes(lms_suffixes, lms_classification, sort_buckets, show=False):
+        def induce_sort_l_type_suffixes(string,
+                                        suffixes,  # L-type suffixes
+                                        classification,
+                                        buckets,
+                                        show=False):
             """
             Places L-type suffixes into correct positions (left-to-right).
             """
-            heads = get_bucket_heads(sort_buckets)
-            for k in range(len(lms_suffixes)):
-                if lms_suffixes[k] == -1:
+            heads = get_bucket_heads(buckets)
+            for k in range(len(suffixes)):
+                if suffixes[k] == -1:
                     continue  # skip non initialized entries
-                j = lms_suffixes[k]  # current suffix ...
+                j = suffixes[k]  # current suffix ...
                 if j == 0:
                     continue  # this entry for the suffix which is the entire string - no suffix to the left of it
                 # get the index of the suffix that begins to the left of the suffix this entry points to
                 j -= 1  # -1 is left of the current position
-                if lms_classification[j] != SuffixType.L:
+                if classification[j] != SuffixType.L:
                     continue  # considering only L-type suffixes
-                index = ord(string[j])  # bucket index
-                lms_suffixes[heads[index]] = j
-                heads[index] += 1  # move head index forward where to insert the next element
+                bucket_index = string[j]
+                suffixes[heads[bucket_index]] = j
+                heads[bucket_index] += 1  # move head index forward where to insert the next element
                 if show:
-                    print(suffix_array_to_string(lms_suffixes, k))
+                    print(suffix_array_to_string(suffixes, k))
 
-        def induce_sort_s_type_suffixes(lms_suffixes, lms_classification, sort_buckets, show=False):
+        def induce_sort_s_type_suffixes(string,
+                                        suffixes,  # S-type suffixes
+                                        classification,
+                                        sort_buckets,
+                                        show=False):
             """
             Places S-type suffixes into positions (right-to-left).
             """
             tails = get_bucket_tails(sort_buckets)
-            for k in range(len(lms_suffixes) - 1, -1, -1):  # backwards
-                j = lms_suffixes[k]  # current suffix ...
+            for k in range(len(suffixes) - 1, -1, -1):  # backwards
+                j = suffixes[k]  # current suffix ...
                 if j == 0:
                     continue  # this entry for the suffix which is the entire string - no suffix to the left of it
                 # get the index of the suffix that begins to the left of the suffix this entry points to
                 j -= 1  # -1 is left of the current position
-                if lms_classification[j] != SuffixType.S:
+                if classification[j] != SuffixType.S:
                     continue  # considering only S-type suffixes
-                index = ord(string[j])  # bucket index
-                lms_suffixes[tails[index]] = j
-                tails[index] -= 1  # move tail index backward where to insert the next element
+                bucket_index = string[j]
+                suffixes[tails[bucket_index]] = j
+                tails[bucket_index] -= 1  # move tail index backward where to insert the next element
                 if show:
-                    print(suffix_array_to_string(lms_suffixes, k))
+                    print(suffix_array_to_string(suffixes, k))
 
-        sa = []
-        classification = classify_suffixes()
-        print(classification_to_string(classification))
-        buckets = build_buckets()
-        print([bucket for bucket in buckets if bucket.char != 0])
-        print(get_bucket_sizes(buckets))
-        print(get_bucket_heads(buckets))
-        print(get_bucket_tails(buckets))
-        suffixes = place_lms_suffixes(classification, buckets, True)
-        induce_sort_l_type_suffixes(suffixes, classification, buckets, True)
-        induce_sort_s_type_suffixes(suffixes, classification, buckets, True)
-        return sa
+        def reduce_string(string,
+                          suffixes,  # suffix array
+                          classification,
+                          show=False):
+            """
+            Reduces S to S1.
+            Name each LMS-substring in S by its bucket index to get a new shortened string S1.
+            Get lexicographical names of all (sorted) LMS-substrings and create S1.
+            """
+            lms_names = [-1] * len(string)  # indices are treated as names
+            curr_name = 0
+            lms_names[suffixes[0]] = curr_name  # empty suffix
+            last_lms_suffix_offset = suffixes[0]
+            if show:
+                print(suffix_array_to_string(lms_names))
+            for k in range(1, len(suffixes)):  # from 1 as we already considered empty suffix
+                lms_suffix_offset = suffixes[k]
+                if not is_left_most_s_char(lms_suffix_offset, classification):
+                    continue
+                if not lms_substrings_are_equal(string,
+                                                classification,
+                                                last_lms_suffix_offset,
+                                                lms_suffix_offset):
+                    curr_name += 1
+                last_lms_suffix_offset = lms_suffix_offset
+                lms_names[lms_suffix_offset] = curr_name
+                if show:
+                    print(suffix_array_to_string(lms_names))
+            reduced_string_lms_suffix_offsets = list()
+            reduced_string = list()  # S1
+            reduced_string_abc_size = curr_name + 1
+            for k, lms_name in enumerate(lms_names):
+                if lms_name == -1:
+                    continue
+                reduced_string_lms_suffix_offsets.append(k)
+                reduced_string.append(lms_name)
+            return reduced_string, reduced_string_abc_size, reduced_string_lms_suffix_offsets
+
+        def assemble_suffix_array(string, abc_size):
+            """
+            Assembles suffix array either directly or recursively calling implementation for complex strings.
+            """
+            string_len = len(string)
+            if abc_size == string_len:
+                # make suffix array directly with bucket sort
+                result = [-1] * (string_len + 1)  # includes virtual sentinel (empty suffix)
+                result[0] = string_len
+                for k in range(string_len):
+                    j = string[k]
+                    result[j + 1] = k
+            else:
+                # ... get a suffix array for S1 by calling SA-IS(S1)
+                string.append(0)  # append virtual sentinel (empty suffix)
+                result = build_suffix_array_induced_sorting(string, abc_size)
+            return result
+
+        def finalize_suffix_array(string,
+                                  classification,
+                                  buckets,
+                                  suffix_array,
+                                  reduced_string_offsets,
+                                  show=False):
+            """
+            """
+            suffixes = [-1] * len(string)  # suffix for every char and sentinel (empty suffix)
+            tails = get_bucket_tails(buckets)
+            for k in range(len(suffix_array) - 1, 1, -1):  # backwards
+                string_index = reduced_string_offsets[suffix_array[k]]
+                bucket_index = string[string_index]
+                suffixes[tails[bucket_index]] = string_index  # remapping
+                tails[bucket_index] -= 1
+                if show:
+                    print(suffix_array_to_string(suffixes))
+            suffixes[0] = len(string) - 1  # -1 for excluding virtual sentinel
+            if show:
+                print(suffix_array_to_string(suffixes))
+            return suffixes
+
+        def build_suffix_array_induced_sorting(string, abc_size):
+            """
+            Builds suffix array with SA-IS algorithm.
+            Might be called recursively.
+            """
+            classification = classify_suffixes(string)
+            buckets = build_buckets(string, abc_size)
+            suffixes = place_lms_suffixes(string, classification, buckets)
+            induce_sort_l_type_suffixes(string, suffixes, classification, buckets)
+            induce_sort_s_type_suffixes(string, suffixes, classification, buckets)
+            (reduced_string,
+             reduced_string_abc_size,
+             reduced_string_offsets) = reduce_string(string, suffixes, classification)
+            suffix_array = assemble_suffix_array(reduced_string, reduced_string_abc_size)
+            suffix_array = finalize_suffix_array(string,
+                                                 classification,
+                                                 buckets,
+                                                 suffix_array,
+                                                 reduced_string_offsets)
+            induce_sort_l_type_suffixes(string, suffix_array, classification, buckets)
+            induce_sort_s_type_suffixes(string, suffix_array, classification, buckets)
+            return suffix_array
+
+        sequence = [ord(ch) for ch in text]
+        sequence.append(0)  # includes virtual sentinel (empty suffix)
+        return build_suffix_array_induced_sorting(sequence, abc_size=256)
 
     @staticmethod
     def collect_suffixes(string, suffixes):

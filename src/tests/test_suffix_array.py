@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 import unittest
+from graph.core.text import Text
 from graph.algorithms.suffix_array import SuffixArray
 
 
@@ -110,7 +111,7 @@ class Test(unittest.TestCase):
         assert lcp == [0, 4, 1, 3, 1, 0, 5, 2, 0, 0]
 
     def test_build_suffix_array_induced_sorting_abracadabra_success(self):
-        string = 'abracadabra'
+        string = 'ABRACADABRA'
         sa = SuffixArray.build_suffix_array_induced_sorting(string)
         assert sa == [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
         suffixes = [suffix for suffix in SuffixArray.collect_suffixes(string, sa)]
@@ -144,16 +145,41 @@ class Test(unittest.TestCase):
         assert lcp == [0, 1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4, 0]
 
     def test_build_suffix_array_induced_sorting_gccttaacattattacgccta_success(self):
-        string = 'gccttaacattattacgccta'
+        string = 'GCCTTAACATTATTACGCCTA'
         sa = SuffixArray.build_suffix_array_induced_sorting(string)
-        assert sa == [16, 15, 14, 10, 6, 2, 11, 7, 3, 1, 0, 13, 12, 9, 5, 8, 4]
+        assert sa == [21, 20, 5, 6, 14, 11, 8, 7, 17, 1, 15, 18, 2, 16, 0, 19, 4, 13, 10, 3, 12, 9]
         suffixes = [suffix for suffix in SuffixArray.collect_suffixes(string, sa)]
-        assert suffixes == [(16, ''), (15, 'i'), (14, 'ii'), (10, 'iippii'), (6, 'iissiippii'),
-                            (2, 'iissiissiippii'), (11, 'ippii'), (7, 'issiippii'), (3, 'issiissiippii'),
-                            (1, 'miissiissiippii'), (0, 'mmiissiissiippii'), (13, 'pii'), (12, 'ppii'),
-                            (9, 'siippii'), (5, 'siissiippii'), (8, 'ssiippii'), (4, 'ssiissiippii')]
+        assert suffixes == [(21, ''), (20, 'A'), (5, 'AACATTATTACGCCTA'), (6, 'ACATTATTACGCCTA'),
+                            (14, 'ACGCCTA'), (11, 'ATTACGCCTA'), (8, 'ATTATTACGCCTA'),
+                            (7, 'CATTATTACGCCTA'), (17, 'CCTA'), (1, 'CCTTAACATTATTACGCCTA'),
+                            (15, 'CGCCTA'), (18, 'CTA'), (2, 'CTTAACATTATTACGCCTA'),
+                            (16, 'GCCTA'), (0, 'GCCTTAACATTATTACGCCTA'), (19, 'TA'),
+                            (4, 'TAACATTATTACGCCTA'), (13, 'TACGCCTA'), (10, 'TATTACGCCTA'),
+                            (3, 'TTAACATTATTACGCCTA'), (12, 'TTACGCCTA'), (9, 'TTATTACGCCTA')]
         lcp = SuffixArray.build_longest_common_prefixes(string, sa)
-        assert lcp == [0, 1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4, 0]
+        assert lcp == [0, 1, 1, 2, 1, 4, 0, 1, 3, 1, 1, 2, 0, 4, 0, 2, 2, 2, 1, 3, 3, 0]
+
+    def test_build_suffix_array_random_success(self):
+        def test_case(length):
+            string = Text.generate_random_string(length)
+            sa_naive = SuffixArray.build_suffix_array(string)
+            suffixes_naive = [suffix for suffix in SuffixArray.collect_suffixes(string, sa_naive)]
+            lcp_naive = SuffixArray.build_longest_common_prefixes(string, sa_naive)
+            assert len(sa_naive) == length + 1
+            assert len(lcp_naive) == length + 1
+            sa = SuffixArray.build_suffix_array_induced_sorting(string)
+            suffixes = [suffix for suffix in SuffixArray.collect_suffixes(string, sa)]
+            lcp = SuffixArray.build_longest_common_prefixes(string, sa)
+            assert len(sa) == length + 1
+            assert len(lcp) == length + 1
+            assert sa_naive == sa
+            assert suffixes_naive == suffixes
+            assert lcp_naive == lcp
+
+        for k in range(1000):
+            test_case(k)
+        for k in range(1, 1001):
+            test_case(11 * k)
 
     def test_find_longest_repeated_substring(self):
         """
