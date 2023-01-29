@@ -23,7 +23,6 @@ class Algorithms(Base):
     def execute_range_minmax_queries(array, queries, function=Functions.MIN):
         """
         Range Minimum Query (RMQ) implementation based on Sparse Table lookup.
-        Based on:
         https://www.youtube.com/watch?v=uUatD9AudXo&list=PLDV1Zeh2NRsB6SWUrDFW2RmDotAfPbeHu&index=55
         """
         assert function in set(item.value for item in Algorithms.Functions), f"Invalid function type {function}."

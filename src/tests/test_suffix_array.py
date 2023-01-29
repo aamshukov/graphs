@@ -181,7 +181,7 @@ class Test(unittest.TestCase):
         for k in range(1, 1001):
             test_case(11 * k)
 
-    def test_find_longest_repeated_substring(self):
+    def test_find_longest_repeated_substring_success(self):
         """
         https://algs4.cs.princeton.edu/63suffix/tinyTale.txt
         """

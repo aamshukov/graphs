@@ -32,7 +32,7 @@ class SuffixArray(Base):
     def build_suffix_array_induced_sorting(text):
         """
         Suffix Array Induced-Sorting (SA-IS) algorithm implementation.
-        This is Python implementation of C++ code (see algorithms project) based on
+        This is Python implementation of C++ code (see algorithms project)
           I. 'Linear Suffix Array Construction by Almost Pure Induced-Sorting' Nong, G., Zhang, S. and Chan, W.
               Data Compression Conference, 2009
           II. and on awesome explanation https://zork.net/~st/jottings/sais.html (thanks!)

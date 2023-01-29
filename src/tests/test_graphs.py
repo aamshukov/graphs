@@ -516,7 +516,7 @@ class Test(unittest.TestCase):
         assert len(graph.vertices) == 0
         assert len(graph.edges) == 0
 
-    def test_graph_success_random(self):
+    def test_graph_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000
@@ -1486,7 +1486,7 @@ class Test(unittest.TestCase):
         # Test.show_graph(graph)
         return graph
 
-    def test_get_topological_order_dfs_colored(self):
+    def test_get_topological_order_dfs_colored_success(self):
         graph = Test.get_topological_order_dfs_colored_graph()
         topological_order = GraphAlgorithms.get_topological_order_dfs_colored(graph)
         topological_order_result = [v.value for v in topological_order]
@@ -1494,7 +1494,7 @@ class Test(unittest.TestCase):
         assert len(topological_order_result) == len(graph.vertices)
         assert topological_order_result == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'H', 'J', 'M', 'G', 'I', 'L']
 
-    def test_get_topological_order_dfs_colored_gen(self):
+    def test_get_topological_order_dfs_colored_gen_success(self):
         graph = Test.get_topological_order_dfs_colored_graph()
         topological_order_gen = GraphAlgorithms.get_topological_order_dfs_colored_gen(graph)
         topological_order = [v.value for v in topological_order_gen]
@@ -1503,7 +1503,7 @@ class Test(unittest.TestCase):
         assert len(topological_order) == len(graph.vertices)
         assert topological_order == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'H', 'J', 'M', 'G', 'I', 'L']
 
-    def test_get_topological_order_dfs_colored_random(self):
+    def test_get_topological_order_dfs_colored_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 100  # watch recursion
@@ -1528,7 +1528,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_get_topological_order_kahn(self):
+    def test_get_topological_order_kahn_success(self):
         graph = Test.get_topological_order_dfs_colored_graph()
         topological_order_gen = GraphAlgorithms.get_topological_order_kahn(graph)
         topological_order = [v.value for v in topological_order_gen]
@@ -1536,7 +1536,7 @@ class Test(unittest.TestCase):
         assert len(topological_order) == len(graph.vertices)
         assert topological_order == ['E', 'F', 'K', 'C', 'B', 'A', 'D', 'G', 'H', 'J', 'M', 'I', 'L']
 
-    def test_get_topological_order_kahn_small(self):
+    def test_get_topological_order_kahn_small_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1564,7 +1564,7 @@ class Test(unittest.TestCase):
         assert len(topological_order) == len(graph.vertices)
         assert topological_order == [2, 4, 5, 0, 3, 1]
 
-    def test_get_topological_order_kahn_random(self):
+    def test_get_topological_order_kahn_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 100  # watch recursion
@@ -1587,7 +1587,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_adjacency_matrix(self):
+    def test_adjacency_matrix_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0)
         v1 = Vertex(1)
@@ -1615,7 +1615,7 @@ class Test(unittest.TestCase):
         DomainHelper.print_matrix(matrix)
         pass
 
-    def test_adjacency_matrix_random(self):
+    def test_adjacency_matrix_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 100  # watch recursion
@@ -1634,7 +1634,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_calculate_tree_traverses(self):
+    def test_calculate_tree_traverses_success(self):
         v1 = Tree(1, '1')
         v2 = Tree(2, '2')
         v3 = Tree(3, '3')
@@ -1653,7 +1653,7 @@ class Test(unittest.TestCase):
         assert preorder == [v1, v2, v4, v5, v3, v6, v7]
         assert postorder == [v4, v5, v2, v6, v7, v3, v1]
 
-    def test_networkx_random_tree(self):
+    def test_networkx_random_tree_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1668,7 +1668,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_calculate_euler_tour(self):
+    def test_calculate_euler_tour_success(self):
         v0 = Tree(0, '0')
         v1 = Tree(1, '1')
         v2 = Tree(2, '2')
@@ -1691,7 +1691,7 @@ class Test(unittest.TestCase):
         assert list(lasts.values()) == [12, 3, 2, 11, 8, 7, 10]
         assert len(lasts) == 7
 
-    def test_calculate_euler_tour2(self):
+    def test_calculate_euler_tour2_success(self):
         v1 = Tree(1, '1')
         v2 = Tree(2, '2')
         v3 = Tree(3, '3')
@@ -1714,7 +1714,7 @@ class Test(unittest.TestCase):
         assert list(lasts.values()) == [12, 1, 9, 4, 6, 8, 11]
         assert len(lasts) == 7
 
-    def test_calculate_euler_tour_random(self):
+    def test_calculate_euler_tour_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1733,7 +1733,7 @@ class Test(unittest.TestCase):
     def tree_cleaner(vertex):
         vertex.flags = Flags.CLEAR
 
-    def test_calculate_lowest_common_ancestor(self):
+    def test_calculate_lowest_common_ancestor_success(self):
         v0 = Tree(0, '0')
         v1 = Tree(1, '1')
         v2 = Tree(2, '2')
@@ -1754,7 +1754,7 @@ class Test(unittest.TestCase):
         tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v3, v3)
         assert tree == v3
 
-    def test_calculate_lowest_common_ancestor_17_nodes(self):
+    def test_calculate_lowest_common_ancestor_17_nodes_success(self):
         v0 = Tree(0, '0')
         v1 = Tree(1, '1')
         v2 = Tree(2, '2')
@@ -1801,7 +1801,7 @@ class Test(unittest.TestCase):
         tree = GraphAlgorithms.calculate_lowest_common_ancestor(v0, v10, tree)
         assert tree == v2
 
-    def test_calculate_lowest_common_ancestor_random(self):
+    def test_calculate_lowest_common_ancestor_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1816,19 +1816,19 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_execute_range_minimum_queries(self):
+    def test_execute_range_minimum_queries_success(self):
         array = [4, 2, 3, 7, 1, 5, 3, 3, 9, 6, 7, -1, 4]
         queries = [(2, 7), (2, 10), (5, 9), (7, 9), (1, 11), (3, 5), (10, 14)]
         answers = Algorithms.execute_range_minmax_queries(array, queries)
         assert answers == [(1, 4), (1, 4), (3, 6), (3, 7), (-1, 11), (1, 4), (float('-inf'), 0)]
 
-    def test_execute_range_minimum_queries_same(self):
+    def test_execute_range_minimum_queries_same_success(self):
         array = [5, 5, 5, 5, 5, 5, 5]
         queries = [(0, len(array) - 1)]
         answers = Algorithms.execute_range_minmax_queries(array, queries)
         assert answers == [(5, 0)]
 
-    def test_execute_range_minimum_queries_random(self):
+    def test_execute_range_minimum_queries_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1840,19 +1840,19 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_execute_range_maximum_queries(self):
+    def test_execute_range_maximum_queries_success(self):
         array = [4, 2, 3, 7, 1, 5, 3, 3, 9, 6, 7, -1, 4]
         queries = [(2, 7), (2, 10), (5, 9), (7, 9), (1, 11), (3, 5), (10, 14)]
         answers = Algorithms.execute_range_minmax_queries(array, queries, function=Algorithms.Functions.MAX)
         assert answers == [(7, 3), (9, 8), (9, 8), (9, 8), (9, 8), (7, 3), (float('-inf'), 0)]
 
-    def test_execute_range_maximum_queries_same(self):
+    def test_execute_range_maximum_queries_same_success(self):
         array = [5, 5, 5, 5, 5, 5, 5]
         queries = [(0, len(array) - 1)]
         answers = Algorithms.execute_range_minmax_queries(array, queries, function=Algorithms.Functions.MAX)
         assert answers == [(5, 0)]
 
-    def test_execute_range_maximum_queries_random(self):
+    def test_execute_range_maximum_queries_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 1000  # watch recursion
@@ -1869,7 +1869,7 @@ class Test(unittest.TestCase):
         for vertex in graph.vertices.values():
             vertex.flags = Flags.CLEAR
 
-    def test_calculate_shortest_distances_dijkstra(self):
+    def test_calculate_shortest_distances_dijkstra_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1900,7 +1900,7 @@ class Test(unittest.TestCase):
         assert prev_vertices == {v1: v2, v2: v0, v3: v2}
         assert dst_distance == 1
 
-    def test_find_shortest_distances_dijkstra(self):
+    def test_find_shortest_distances_dijkstra_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1925,7 +1925,7 @@ class Test(unittest.TestCase):
         assert path == [v0, v2, v1, v3, v4]
         assert dst_distance == 7
 
-    def test_calculate_shortest_distances_dijkstra2(self):
+    def test_calculate_shortest_distances_dijkstra2_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1963,7 +1963,7 @@ class Test(unittest.TestCase):
         assert prev_vertices == {v1: v2, v2: v0, v4: v2}
         assert dst_distance == 1
 
-    def test_find_shortest_distances_dijkstra2(self):
+    def test_find_shortest_distances_dijkstra2_success(self):
         graph = Graph(digraph=True)
         v0 = Vertex(0, '0', 0)
         v1 = Vertex(1, '1', 1)
@@ -1995,7 +1995,7 @@ class Test(unittest.TestCase):
         assert path == [v0, v2, v1, v3, v4, v5]
         assert dst_distance == 10
 
-    def test_find_shortest_distances_dijkstra_random(self):
+    def test_find_shortest_distances_dijkstra_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 100  # watch recursion
@@ -2013,7 +2013,7 @@ class Test(unittest.TestCase):
         now = datetime.now()
         print(f"End: {now}")
 
-    def test_find_minimum_spanning_tree_kruskal(self):
+    def test_find_minimum_spanning_tree_kruskal_success(self):
         graph = Graph(digraph=False)
         v_a = Vertex(0, 'A', 'A')
         v_b = Vertex(1, 'B', 'B')
@@ -2059,7 +2059,7 @@ class Test(unittest.TestCase):
         assert mst == [('J', 'I', 0), ('A', 'E', 1), ('C', 'I', 1), ('E', 'F', 1), ('G', 'H', 1), ('B', 'D', 2),
                        ('D', 'E', 2), ('D', 'H', 2), ('B', 'C', 4)]
 
-    def test_find_minimum_spanning_tree_kruskal_random(self):
+    def test_find_minimum_spanning_tree_kruskal_random_success(self):
         now = datetime.now()
         print(f"Start: {now}")
         n = 100  # watch recursion

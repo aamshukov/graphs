@@ -102,3 +102,15 @@ class Text(Base):
         """
         data = string.printable
         return ''.join(random.choice(data) for i in range(length))
+
+    @staticmethod
+    def find_all_substrings(text, pattern):
+        result = list()
+        index = 0
+        while True:
+            index = text.find(pattern, index)
+            if index < 0:
+                break
+            result.append(index)
+            index += len(pattern)
+        return result

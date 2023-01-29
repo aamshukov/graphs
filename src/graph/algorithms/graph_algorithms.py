@@ -137,8 +137,7 @@ class GraphAlgorithms(Base):
     @staticmethod
     def get_topological_order_dfs_colored(graph):
         """
-        Based on HelloKoding
-        https://hellokoding.com/topological-sort/
+        HelloKoding: https://hellokoding.com/topological-sort/
         https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search
         https://www.geeksforgeeks.org/detect-cycle-direct-graph-using-colors/?ref=rp
         Colors:
@@ -175,7 +174,7 @@ class GraphAlgorithms(Base):
     @staticmethod
     def get_topological_order_dfs_colored_gen(graph):
         """
-        Based on ... get_topological_order_dfs_colored
+        see ... get_topological_order_dfs_colored
         """
         assert graph.digraph, "Invalid graph type, must be directed graph."
         stack = list()
@@ -312,7 +311,6 @@ class GraphAlgorithms(Base):
         """
         Calculates the shortest distances to every vertex from the given vertex.
         Also returns previously visited vertices to reconstruct paths.
-        Based on:
         https://www.youtube.com/watch?v=pSqmAO-m7Lk&list=PLDV1Zeh2NRsDGO4--qE8yH72HFL1Km93P&index=18
         """
         dst_distance = DomainHelper.get_max_int()

@@ -3,7 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Disjount set / Union Find """
-# based on https://algs4.cs.princeton.edu/15uf/UF.java.html
+# https://algs4.cs.princeton.edu/15uf/UF.java.html
 # by Robert Sedgewick and Kevin Wayne
 from graph.core.base import Base
 
