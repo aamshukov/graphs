@@ -5,7 +5,7 @@
 from graph.core.flags import Flags
 from graph.core.colors import Colors
 from graph.core.text import Text
-from graph.core.domainhelper import DomainHelper
+from graph.core.domain_helper import DomainHelper
 from graph.core.entity import Entity
 from graph.patterns.visitable import Visitable
 

@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 """ Domain helper """
+import os
 import sys
 from collections import namedtuple
 from graph.core.base import Base
@@ -40,3 +41,9 @@ class DomainHelper(Base):
     @staticmethod
     def get_max_int():
         return sys.maxsize
+
+    @staticmethod
+    def generate_random_bytes(length):
+        """
+        """
+        return bytearray(os.urandom(length))

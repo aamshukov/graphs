@@ -7,7 +7,7 @@ import itertools
 import inspect
 from abc import abstractmethod
 from graph.core.base import Base
-from graph.core.domainhelper import DomainHelper
+from graph.core.domain_helper import DomainHelper
 
 
 class Equatable(Base):

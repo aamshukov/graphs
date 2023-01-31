@@ -13,7 +13,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from graph.core.flags import Flags
 from graph.core.colors import Colors
-from graph.core.domainhelper import DomainHelper
+from graph.core.domain_helper import DomainHelper
 from graph.algorithms.core_algorithms import Algorithms
 from graph.adt.disjoint_set import DisjointSet
 from graph.adt.vertex import Vertex

@@ -7,7 +7,7 @@ import unittest
 from graph.core.flags import Flags
 from graph.core.logger import Logger
 from graph.core.text import Text
-from graph.core.domainhelper import DomainHelper
+from graph.core.domain_helper import DomainHelper
 from graph.core.value import Value
 from graph.core.entity import Entity
 

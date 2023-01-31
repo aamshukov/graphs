@@ -8,7 +8,7 @@ from collections import defaultdict
 from operator import itemgetter
 from graph.core.flags import Flags
 from graph.core.colors import Colors
-from graph.core.domainhelper import DomainHelper
+from graph.core.domain_helper import DomainHelper
 from graph.core.base import Base
 from graph.adt.disjoint_set import DisjointSet
 
