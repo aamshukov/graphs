@@ -30,7 +30,7 @@ class TextAlgorithms(Base):
                 # phase 1: calibrate start index - roll tp back to 0 or to a match
                 while tp and pattern0[tp] != pattern0[bp]:
                     tp = lps0[tp - 1]
-                # phase 2: while symbols match (tp == bp) move both pointers
+                # phase 2: while symbols match (tp == bp) move both kids
                 if pattern0[tp] == pattern0[bp]:
                     tp += 1  # bp advanced implicitly by loop
                     lps0[bp] = tp
@@ -48,7 +48,7 @@ class TextAlgorithms(Base):
             # phase 1: calibrate index - rollback pattern's index
             while pattern_k and pattern[pattern_k] != ch:
                 pattern_k = lps[pattern_k - 1]
-            # phase 2: while symbols match move both pointers
+            # phase 2: while symbols match move both kids
             if pattern[pattern_k] == ch:
                 if pattern_k == len(pattern) - 1:  # if end of pattern
                     result.append(text_k - pattern_k)

@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" B* Tree In-Memory Repository """
-from graph.btrees.btree_readonly_memory_repository import BTreeInMemoryReadOnlyRepository
+""" In-Memory Repository """
+from graph.indexing.readonly_memory_repository import InMemoryReadOnlyRepository
 
 
-class BTreeInMemoryRepository(BTreeInMemoryReadOnlyRepository):
+class InMemoryRepository(InMemoryReadOnlyRepository):
     """
     """
     def __init__(self, page_size):

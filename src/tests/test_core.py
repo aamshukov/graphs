@@ -3,6 +3,7 @@
 # UI Lab Inc. Arthur Amshukov
 #
 import os
+import struct
 import unittest
 from graph.core.flags import Flags
 from graph.core.logger import Logger
@@ -163,7 +164,7 @@ class Test(unittest.TestCase):
     def test_collect_by_category(self):
         Text.collect_by_category('Cf')
 
-    def test_string_kind(self):
+    def test_string_kind_success(self):
         kind = Text.get_string_kind('a')
         print(kind)
         # assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
@@ -179,6 +180,62 @@ class Test(unittest.TestCase):
         kind = Text.get_string_kind('သည်')
         print(kind)
         # assert kind == Text.PyUnicodeObject.PyUnicode_2BYTE_KIND
+
+    def test_serialize_string_success(self):
+        string1 = 'Hdr'
+        data = DomainHelper.serialize_string(string1)
+        string2 = DomainHelper.deserialize_string(data)
+        assert Text.equal(string1, string2)
+        string1 = 'Long long text'
+        data = DomainHelper.serialize_string(string1)
+        string2 = DomainHelper.deserialize_string(data)
+        assert Text.equal(string1, string2)
+
+    @staticmethod
+    def build_template(hdr, hdr_size, ptrs, keys, key_size):
+        core_template = '<'  # little-endian
+        core_template += f"{len(bytes(DomainHelper.pad_string(hdr, hdr_size), 'utf-8'))}s"
+        core_template += f"{len(ptrs)}I"
+        keys_template = '<'
+        for key in keys:
+            key = DomainHelper.pad_string(key, key_size)
+            key_bytes = bytes(key, 'utf-8')
+            keys_template += f"{len(key_bytes)}s"
+        return core_template, keys_template
+
+    def test_serialize_data_success(self):
+        header = 'TreeHeader'
+        header_size = 16
+        pointers = [1, 2, 3, 4, 5, 6]
+        keys = ['Key1', 'Key2', 'Key3', 'Key4', 'Key5']
+        key_size = 16
+        core_template, keys_template = Test.build_template(header, header_size, pointers, keys, key_size)
+        core_size = struct.calcsize(core_template)
+        full_size = core_size + struct.calcsize(keys_template)
+        buffer = bytearray(full_size)
+        struct.pack_into(core_template,
+                         buffer,
+                         0,
+                         bytes(DomainHelper.pad_string(header, header_size), 'utf-8'),
+                         *pointers)
+        offset = core_size
+        for key in keys:
+            key = DomainHelper.pad_string(key, key_size)
+            key_bytes = bytes(key, 'utf-8')
+            key_template = f"{len(key_bytes)}s"
+            struct.pack_into(key_template, buffer, offset, key_bytes)
+            offset += len(key_bytes)
+        core_data = struct.unpack_from(core_template, buffer, 0)
+        header1, *pointers1 = core_data
+        header1 = header1.decode('utf-8').strip()
+        assert header == header1
+        assert pointers == pointers1
+        keys_data = struct.unpack_from(keys_template, buffer, core_size)
+        keys1 = list()
+        for key in keys_data:
+            key = key.decode('utf-8').strip()
+            keys1.append(key)
+        assert keys == keys1
 
 
 if __name__ == '__main__':

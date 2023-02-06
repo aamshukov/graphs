@@ -35,7 +35,7 @@ class Vertex(Entity, Visitable):
     def __repr__(self):
         """
         """
-        return f"{type(self).__name__}:{self._id}:{self._label}:{self._value}:[{self._attributes}]:" \
+        return f"{type(self).__name__}:{self._id}:{self._label}:{self._version}:{self._value}:[{self._attributes}]:" \
                f"{self._flags}:{self._color}:[{self._adjacencies}]]"
 
     __str__ = __repr__

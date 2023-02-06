@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" B* Tree Repository """
+""" Repository """
 from abc import abstractmethod
-from graph.btrees.btree_readonly_repository import BTreeReadOnlyRepository
+from graph.indexing.readonly_repository import ReadOnlyRepository
 
 
-class BTreeRepository(BTreeReadOnlyRepository):
+class Repository(ReadOnlyRepository):
     """
     """
     def __init__(self, page_size):
@@ -19,4 +19,4 @@ class BTreeRepository(BTreeReadOnlyRepository):
         """
         Writes specific number of bytes from the buffer at the offset.
         """
-        raise NotImplementedError("BTreeRepository:read")
+        raise NotImplementedError("Repository:read")

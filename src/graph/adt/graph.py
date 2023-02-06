@@ -29,7 +29,8 @@ class Graph(Entity):
     def __repr__(self):
         """
         """
-        return f"{type(self).__name__}:{self._digraph}:[{self._vertices}]:({self._edges})"
+        return f"{type(self).__name__}:{self._id}:{self._label}:{self._version}:" \
+               f"{self._digraph}:[{self._vertices}]:({self._edges})"
 
     __str__ = __repr__
 

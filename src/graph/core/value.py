@@ -37,14 +37,16 @@ class Value(Equatable):
     def __lt__(self, other):
         """
         """
-        result = super().__lt__(other)
+        result = (super().__lt__(other) and
+                  self._version < other.version)
         return result
 
     @abstractmethod
     def __le__(self, other):
         """
         """
-        result = super().__le__(other)
+        result = (super().__le__(other) and
+                  self._version <= other.version)
         return result
 
     @property

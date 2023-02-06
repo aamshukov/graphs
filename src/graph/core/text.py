@@ -37,10 +37,10 @@ class Text(Base):
         _fields_ = (('kind', ctypes.c_uint, 3), )
 
     @staticmethod
-    def get_string_kind(string):
+    def get_string_kind(text):
         """
         """
-        return Text.PyUnicodeObject.from_address(id(string)).kind
+        return Text.PyUnicodeObject.from_address(id(text)).kind
 
     @staticmethod
     def list_category(category, filepath=r"D:\Tmp\UnicodeData.txt"):
@@ -92,8 +92,8 @@ class Text(Base):
         """
         """
         result = ""
-        for k, string in enumerate(strings):
-            result += string + chr(k)
+        for k, text in enumerate(strings):
+            result += text + chr(k)
         return result
 
     @staticmethod

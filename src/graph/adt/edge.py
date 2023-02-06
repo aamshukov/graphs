@@ -29,7 +29,8 @@ class Edge(Entity):
     def __repr__(self):
         """
         """
-        return f"{type(self).__name__}:{self._id}:{self._value}:{self._flags}:[{self._attributes}]:({self._endpoints})"
+        return f"{type(self).__name__}:{self._id}:{self._value}:{self._flags}:{self._version}" \
+               f"[{self._attributes}]:({self._endpoints})"
 
     __str__ = __repr__
 

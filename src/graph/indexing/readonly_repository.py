@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
-""" B* Tree ReadOnly Repository """
+""" ReadOnly Repository """
 from abc import abstractmethod
 from graph.core.base import Base
 
 
-class BTreeReadOnlyRepository(Base):
+class ReadOnlyRepository(Base):
     """
     """
     def __init__(self, page_size):
@@ -27,4 +27,4 @@ class BTreeReadOnlyRepository(Base):
         """
         Reads specific number of bytes at the offset.
         """
-        raise NotImplementedError("BTreeReadOnlyRepository:read")
+        raise NotImplementedError("ReadOnlyRepository:read")

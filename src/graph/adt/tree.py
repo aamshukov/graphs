@@ -36,7 +36,7 @@ class Tree(Entity, Visitable):
     def __repr__(self):
         """
         """
-        return f"{type(self).__name__}:{self._id}:{self._label}:{self._value}:[{self._attributes}]:" \
+        return f"{type(self).__name__}:{self._id}:{self._label}:{self._version}:{self._value}:[{self._attributes}]:" \
                f"{self._flags}:{self._color}:{self._papa}:[{self._kids}]]"
 
     __str__ = __repr__
@@ -53,9 +53,9 @@ class Tree(Entity, Visitable):
         """
         result = (super().__eq__(other) and
                   Text.equal(self._label, other.label) and
-                  self._value == other.value and
-                  self._papa == other.papa and
-                  tuple(self._kids) == tuple(other.kids))
+                  self._value == other.value)
+                  # self._papa == other.papa and
+                  # tuple(self._kids) == tuple(other.kids))
         return result
 
     def __lt__(self, other):
