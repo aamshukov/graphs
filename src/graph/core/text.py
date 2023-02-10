@@ -27,6 +27,22 @@ class Text(Base):
         else:
             return nfc(lhs) == nfc(rhs)
 
+    @staticmethod
+    def compare(lhs, rhs, case_insensitive=False, normalization_form='NFC'):
+        """
+        """
+        assert lhs is not None
+        assert rhs is not None
+        nfc = functools.partial(normalize, normalization_form)
+        if case_insensitive:
+            lhs, rhs = nfc(lhs).casefold(), nfc(rhs).casefold()
+        result = 0
+        if nfc(lhs) < nfc(rhs):
+            result = -1
+        elif nfc(lhs) > nfc(rhs):
+            result = 1
+        return result
+
     class PyUnicodeObject(ctypes.Structure):
         """
         """

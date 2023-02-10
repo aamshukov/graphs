@@ -4,10 +4,7 @@
 """  B-Tree based Index implementation """
 import struct
 from collections import namedtuple
-from enum import IntEnum
 from functools import lru_cache
-
-from graph.core.domain_helper import DomainHelper
 from graph.core.text import Text
 from graph.adt.tree import Tree
 from graph.core.entity import Entity
@@ -16,12 +13,12 @@ from graph.core.entity import Entity
 class Index(Entity):
     """
     """
-    M = 12  # inner node order or branching factor, also fanout factor (number of kids to child nodes)
+    M = 12  # inner node order or branching factor, also fanout factor (number of keys)
     L = 6  # leaf node order, kvp
     Endianness = '<'
     Header = 'AA'  # index header, common preamble of the index
     HeaderSize = 64  # bytes
-    TreeHeader = 'AA'  # tree/record header
+    TreeHeader = 'AA 1.0.0'  # tree/record header
     TreeHeaderSize = 28  # bytes
     KeySize = 36  # bytes
     ValueSize = 56  # bytes
@@ -41,7 +38,9 @@ class Index(Entity):
         self._repository = repository
         self._fanout = fanout
         self._root = None
+        self._height = 0
         self._number_of_nodes = 0
+        self._number_of_kvps = 0
 
     def __repr__(self):
         """
@@ -77,6 +76,18 @@ class Index(Entity):
                   self._label <= other.label)
         return result
 
+    @property
+    def fanout(self):
+        """
+        """
+        return self._fanout
+
+    @property
+    def root(self):
+        """
+        """
+        return self._root
+
     class BTree(Tree):
         """
         """
@@ -84,15 +95,15 @@ class Index(Entity):
         def __init__(self,
                      id,
                      fanout,
-                     keys=None,
-                     kid_ids=None,
                      version='1.0'):
             """
             """
             super().__init__(id, version)
             self._fanout = fanout
-            self._keys = [key for key in keys] if keys else [None] * fanout  # list of keys
-            self._kid_ids = [id for id in kid_ids] if kid_ids else [0] * fanout  # list of kid ids for io
+            self._keys = [None] * fanout  # list of keys
+            self._keys_count = 0  # occupancy, number of keys currently stored
+            self._kids = [None] * (fanout + 1)  # list of kids
+            self._kid_ids = [0] * (fanout + 1)  # list of kid ids for i/o
 
         def __repr__(self):
             """
@@ -116,16 +127,45 @@ class Index(Entity):
             """
             return super().__lt__(other)
 
+        def __le__(self, other):
+            """
+            """
+            return super().__le__(other)
+
+        @property
+        def full(self):
+            """
+            """
+            return self._keys_count == self._fanout
+
         @property
         def keys(self):
             """
             """
             return self._keys
 
-        def __le__(self, other):
+        def add_key(self, key):
             """
             """
-            return super().__le__(other)
+            self._keys.append(key)
+            self._keys_count += 1
+
+        def remove_key(self, key):
+            """
+            """
+            self._keys.remove(key)
+            self._keys_count -= 1
+
+        @property
+        def kid_ids(self):
+            """
+            """
+            return self._kid_ids
+
+        def set_kid_ids(self, kid_ids):
+            """
+            """
+            self._kid_ids = [kid for kid in kid_ids]
 
         def validate(self):
             """
@@ -139,12 +179,12 @@ class Index(Entity):
 
         @staticmethod
         @lru_cache
-        def calculate_size():
+        def calculate_size(fanout):
             """
             """
             result = Index.TreeHeaderSize
-            result += (Index.M + 1) * Index.PtrSize
-            result += Index.M * Index.KeySize
+            result += fanout * Index.KeySize
+            result += (fanout + 1) * Index.PtrSize
             return result
 
         @staticmethod
@@ -199,8 +239,8 @@ class Index(Entity):
 
         def serialize(self):
             """
-            TreeHeader | Pn | P(0) | ... | P(i-1) | P(i) | Kn | K(0) | ... | K(i-1)
-            TreeHeader: ... | len(P) | ...
+            TreeHeader | P(0) | ... | P(i-1) | P(i) | Kn | K(0) | ... | K(i-1)
+            TreeHeader: ... | KeysCount | ...
             P - kid pointer id, K - key.
             """
             kids = [kid.id for kid in self._kids]
@@ -219,7 +259,7 @@ class Index(Entity):
                              offset,
                              len(header_bytes),
                              header_bytes,
-                             len(kids))
+                             self._keys_count)
             offset = struct.calcsize(header_template)
             kids_template = f"{len(kids)}I"
             struct.pack_into(kids_template, buffer, offset, *kids)
@@ -242,16 +282,16 @@ class Index(Entity):
             offset = 0
             header_template = f"{Index.Endianness}" \
                               f"{Index.BTree.get_header_pack_template(Index.TreeHeader, Index.TreeHeaderSize)}"
-            _, header, kids_count, *tail = struct.unpack_from(header_template, buffer, 0)
+            _, header, keys_count, *tail = struct.unpack_from(header_template, buffer, 0)
             header = header.decode('utf-8').strip()
             assert Text.equal(header, Index.TreeHeader), "Invalid header. Content mismatch."
             offset += struct.calcsize(header_template)
+            kids_count = keys_count + 1
             kids_template = f"{Index.Endianness}{kids_count}I"
             kids = struct.unpack_from(kids_template, buffer, offset)
             kids = list(kids)
             assert len(kids) == kids_count, "Invalid kids. Size mismatch."
             offset += struct.calcsize(kids_template)
-            keys_count = kids_count - 1
             count_template = f"{Index.Endianness}{Index.BTree.get_count_pack_template()}"
             count_size = struct.calcsize(count_template)
             keys = list()
@@ -266,7 +306,7 @@ class Index(Entity):
                 keys.append(key)
                 offset += key_size
             assert len(keys) == keys_count, "Invalid keys. Size mismatch."
-            return header, keys, kids
+            return header, keys_count, keys, kids
 
     class BTreeLeaf(BTree):
         """
@@ -275,20 +315,15 @@ class Index(Entity):
         def __init__(self,
                      id,
                      fanout,
-                     keys=None,
-                     values=None,
-                     kid_ids=None,
-                     prev_id=0,
-                     next_id=0,
                      version='1.0'):
             """
             """
-            super().__init__(id, fanout, keys=keys, kid_ids=kid_ids, version=version)
-            self._values = [value for value in values] if values else [None] * fanout  # list of values
+            super().__init__(id, fanout, version=version)
+            self._values = [None] * fanout  # list of values
             self._prev = None  # leaf node links
-            self._prev_id = prev_id
+            self._prev_id = 0
             self._next = None
-            self._next_id = next_id
+            self._next_id = 0
 
         def __repr__(self):
             """
@@ -323,17 +358,58 @@ class Index(Entity):
             """
             return self._values
 
+        def set_values(self, values):
+            """
+            """
+            self._values = [value for value in values]
+
         @property
         def prev(self):
             """
             """
             return self._prev
 
+        @prev.setter
+        def prev(self, prev):
+            """
+            """
+            self._prev = prev
+
+        @property
+        def prev_id(self):
+            """
+            """
+            return self._prev_id
+
+        @prev_id.setter
+        def prev_id(self, id):
+            """
+            """
+            self._prev_id = id
+
         @property
         def next(self):
             """
             """
             return self._next
+
+        @next.setter
+        def next(self, nxt):
+            """
+            """
+            self._next = nxt
+
+        @property
+        def next_id(self):
+            """
+            """
+            return self._next_id
+
+        @next_id.setter
+        def next_id(self, id):
+            """
+            """
+            self._next_id = id
 
         def validate(self):
             """
@@ -372,9 +448,9 @@ class Index(Entity):
 
         def serialize(self):
             """
-            TreeHeader | Pn | P(0) | ... | P(i-1) | P(i) | KVPn | KVP(0) | ... | KVP(i-1)
-            TreeHeader: ... | Prev | Next | len(P) | ...
-            P - kid pointer id, KVP - key:value pair.
+            TreeHeader | P(0) | ... | P(i-1) | KVPn | KVP(0) | ... | KVP(i-1)
+            TreeHeader: ... | Prev | Next | KeysCount | ...
+            P - data pointer id (overflow page), KVP - key:value pair.
             """
             kids = [kid.id for kid in self._kids]
             buffer_size = Index.BTreeLeaf.calculate_leaf_buffer_size(Index.TreeHeader,
@@ -396,7 +472,7 @@ class Index(Entity):
                              header_bytes,
                              self._prev_id,
                              self._next_id,
-                             len(kids))
+                             self._keys_count)
             offset = struct.calcsize(header_template)
             kids_template = f"{len(kids)}I"
             struct.pack_into(kids_template, buffer, offset, *kids)
@@ -426,17 +502,17 @@ class Index(Entity):
             offset = 0
             header_template = f"{Index.Endianness}" \
                               f"{Index.BTreeLeaf.get_header_pack_template(Index.TreeHeader, Index.TreeHeaderSize)}"
-            _, header, prev_id, next_id, kids_count, *tail = struct.unpack_from(header_template, buffer, 0)
+            _, header, prev_id, next_id, keys_count, *tail = struct.unpack_from(header_template, buffer, 0)
             header = header.decode('utf-8').strip()
             assert Text.equal(header, Index.TreeHeader), "Invalid header. Content mismatch."
             offset += struct.calcsize(header_template)
+            kids_count = keys_count  # matches keys number cause [P:KVP]
+            values_count = keys_count
             kids_template = f"{Index.Endianness}{kids_count}I"
             kids = struct.unpack_from(kids_template, buffer, offset)
             kids = list(kids)
             assert len(kids) == kids_count, "Invalid kids. Size mismatch."
             offset += struct.calcsize(kids_template)
-            keys_count = kids_count - 1
-            values_count = kids_count - 1
             count_template = f"{Index.Endianness}{Index.BTree.get_count_pack_template()}"
             count_size = struct.calcsize(count_template)
             keys = list()
@@ -462,12 +538,13 @@ class Index(Entity):
                 offset += value_size
             assert len(keys) == keys_count, "Invalid keys. Size mismatch."
             assert len(values) == values_count, "Invalid values. Size mismatch."
-            return header, keys, values, kids, prev_id, next_id
+            return header, keys_count, keys, values, kids, prev_id, next_id
 
     def create(self):
         """
         """
-        pass
+        self._root = Index.BTreeLeaf(0, self._fanout)
+        self.save_tree(self._root)
 
     def search(self, key):
         """
@@ -503,15 +580,95 @@ class Index(Entity):
         size = Index.BTree.calculate_size()
         buffer = self._repository.read(offset, size)
         if leaf:
-            header, keys, values, kids, prev_id, next_id = Index.BTreeLeaf.deserialize(buffer)
-            result = Index.BTreeLeaf(id, Index.M, keys, values, kids, prev_id, next_id)
+            header, keys_count, keys, values, kids, prev_id, next_id = Index.BTreeLeaf.deserialize(buffer)
+            result = Index.BTreeLeaf(id, Index.M)
+            for key in keys:
+                result.add_key(key)
+            result.set_values(values)
+            result.set_kid_ids(kids)
+            result.prev_id = prev_id
+            result.next_id = next_id
         else:
-            header, keys, kids = Index.BTree.deserialize(buffer)
-            result = Index.BTree(id, Index.M, keys, kids)
+            header, keys_count, keys, kids = Index.BTree.deserialize(buffer)
+            result = Index.BTree(id, Index.M)
+            for key in keys:
+                result.add_key(key)
+            result.set_kid_ids(kids)
         return result
 
-    @staticmethod
-    def calculate_offset(id):
+    @lru_cache
+    def calculate_offset(self, id):
+        """
+        """
         offset = Index.HeaderSize
-        offset += id * Index.BTree.calculate_size()
+        offset += id * Index.BTree.calculate_size(self._fanout)
         return offset
+
+    @staticmethod
+    def search_key(key, keys, lo=0, hi=None):
+        """
+        """
+        assert key is not None, "Key must be non None."
+
+        def binary_search(_key, _keys, _lo=0, _hi=None):
+            result = -1
+            if _hi is None:
+                _hi = len(keys) - 1
+            while _lo <= _hi:
+                mid = (_hi + _lo) // 2
+                cmp = Text.compare(_key, _keys[mid])
+                if cmp > 0:
+                    _lo = mid + 1
+                elif cmp < 0:
+                    _hi = mid - 1
+                else:
+                    result = mid
+                    break
+            return result
+        return binary_search(key, keys, lo, hi)
+
+    @staticmethod
+    def search_key_position(key, keys, lo=0, hi=None, desc=False):
+        """
+        """
+        assert key is not None, "Key must be non None."
+
+        def locate(_key, _keys, _lo=0, _hi=None):
+            if _hi is None:
+                _hi = len(keys)
+            while _lo < _hi:
+                mid = (_hi + _lo) // 2
+                if _keys[mid] is None:
+                    cmp = -1 if desc else 1  # None is always less/bigger than key
+                else:
+                    cmp = Text.compare(_key, _keys[mid])
+                if cmp < 0:
+                    _hi = mid
+                else:
+                    _lo = mid + 1
+            return _lo
+        return locate(key, keys, lo, hi)
+
+    @staticmethod
+    def set_key(key, keys, lo=0, hi=None):
+        """
+        """
+        position = Index.search_key_position(key, keys, lo, hi)
+        assert position < len(keys), "Invalid position calculated."
+        keys[position] = key
+        return position
+
+    @staticmethod
+    def insert_key(key, keys, lo=0, hi=None):
+        """
+        Inserts key to the right of the found position (handles duplicates).
+        hi should be _keys_count + 1, + 1 to include the next slot in keys.
+        """
+        if hi is None:
+            hi = len(keys)
+        position = Index.search_key_position(key, keys, lo, hi, desc=True)
+        assert position < hi, "Invalid position calculated."
+        for k in range(hi - 1, position, -1):
+            keys[k] = keys[k - 1]
+        keys[position] = key
+        return keys, position
