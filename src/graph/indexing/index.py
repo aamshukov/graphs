@@ -14,7 +14,7 @@ from graph.core.entity import Entity
 class Index(Entity):
     """
     """
-    M = 12  # inner node order or branching factor, also fanout factor (number of keys)
+    M = 12  # fanout factor (number of keys)
     L = 6  # leaf node order, kvp
     Endianness = '<'
     Header = 'AA'  # index header, common preamble of the index
@@ -810,7 +810,7 @@ class Index(Entity):
         """
         pass
 
-    def remove(self, key):
+    def delete(self, key):
         """
         """
         pass
@@ -856,79 +856,20 @@ class Index(Entity):
         offset += id * Index.BTreeBranch.calculate_size(self._fanout)
         return offset
 
-    # @staticmethod
-    # def search_key(key, keys, lo=0, hi=None):
-    #     """
-    #     """
-    #     assert key is not None, "Key must be non None."
-    #
-    #     def binary_search(_key, _keys, _lo=0, _hi=None):
-    #         result = -1
-    #         if _hi is None:
-    #             _hi = len(keys) - 1
-    #         while _lo <= _hi:
-    #             mid = (_hi + _lo) // 2
-    #             cmp = Text.compare(_key, _keys[mid])
-    #             if cmp > 0:
-    #                 _lo = mid + 1
-    #             elif cmp < 0:
-    #                 _hi = mid - 1
-    #             else:
-    #                 result = mid
-    #                 break
-    #         return result
-    #     return binary_search(key, keys, lo, hi)
-    #
-    # @staticmethod
-    # def search_key_position(key, keys, lo=0, hi=None, desc=False):
-    #     """
-    #     """
-    #     assert key is not None, "Key must be non None."
-    #
-    #     def locate(_key, _keys, _lo=0, _hi=None):
-    #         if _hi is None:
-    #             _hi = len(keys)
-    #         while _lo < _hi:
-    #             mid = (_hi + _lo) // 2
-    #             if _keys[mid] is None:
-    #                 cmp = -1 if desc else 1  # None is always less/bigger than key
-    #             else:
-    #                 cmp = Text.compare(_key, _keys[mid])
-    #             if cmp < 0:
-    #                 _hi = mid
-    #             else:
-    #                 _lo = mid + 1
-    #         return _lo
-    #     return locate(key, keys, lo, hi)
-
-    # @staticmethod
-    # def set_key(key, keys, lo=0, hi=None):
-    #     """
-    #     """
-    #     position = Index.search_key_position(key, keys, lo, hi)
-    #     assert position < len(keys), "Invalid position calculated."
-    #     keys[position] = key
-    #     return position
-
-    # @staticmethod
-    # def set_value(value, values, position):
-    #     """
-    #     """
-    #     assert position < len(values), "Invalid position."
-    #     values[position] = value
-    #     return position
-
-    # @staticmethod
-    # def insert_key(key, keys, lo=0, hi=None):
-    #     """
-    #     Inserts key to the right of the found position (handles duplicates).
-    #     hi should be _keys_count + 1, + 1 to include the next slot in keys.
-    #     """
-    #     if hi is None:
-    #         hi = len(keys)
-    #     position = Index.search_key_position(key, keys, lo, hi, desc=True)
-    #     assert position < hi, "Invalid position calculated."
-    #     for k in range(hi - 1, position, -1):
-    #         keys[k] = keys[k - 1]
-    #     keys[position] = key
-    #     return keys, position
+    @staticmethod
+    def to_string(tree):
+        """
+        """
+        assert tree, "Tree must be valid."
+        lines = []
+        nodes = [(tree, 0)]
+        while nodes:
+            node, level = nodes.pop(0)
+            indent = "    " * level
+            if type(node) is Index.BTreeLeaf:
+                lines.append(f"+- {indent} Leaf({list(zip(node.keys, node.values))})")
+            else:
+                lines.append(f"+- {indent} Branch({node.keys})")
+                for k in range(len(node.values)):
+                    nodes.append((node.values[k], level + 1))
+        return "\n".join(lines)
