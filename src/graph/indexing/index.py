@@ -730,7 +730,7 @@ class Index(Entity):
     def insert_non_full(self, tree, key, value, level=0):
         """
         """
-        leaf = level == self._height
+        leaf = level == self._height  # self.kids is empty
         if leaf:
             tree.insert_key_value(key, value)
             self.save_tree(tree)
