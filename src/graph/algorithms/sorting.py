@@ -18,11 +18,11 @@ class Sorting(Base):
             lo - low/left index
             hi - high/right index
         """
-        def _quicksort(_ar, _lo, _hi, _partition):
+        def _quicksort(_ar, _lo, _hi, _partition, _c):
             if 0 <= _lo < _hi and _hi >= 0:
                 k = partition(_ar, _lo, _hi)  # k is pivot index and ar[k] at the right place
-                _quicksort(_ar, _lo, k, _partition)
-                _quicksort(_ar, k + 1, _hi, _partition)
+                _quicksort(_ar, _lo, k - _c, _partition, _c)  # left side of pivot, pivot might be included or not: c
+                _quicksort(_ar, k + 1, _hi, _partition, _c)  # right side of pivot
 
         def _hoare_partition(_ar, _lo, _hi):
             """
@@ -55,6 +55,24 @@ class Sorting(Base):
 
         if hi is None:
             hi = len(ar) - 1
+        c = 1  # for lomuto partition scheme
         if partition is None:
             partition = _hoare_partition
-        _quicksort(ar, lo, hi, partition)
+            c = 0
+        _quicksort(ar, lo, hi, partition, c)
+
+    @staticmethod
+    def lomuto_partition(ar, lo, hi):
+        """
+        Quicksort. Lomuto partition scheme.
+        https://en.wikipedia.org/wiki/Quicksort#Lomuto_partition_scheme
+        """
+        pivot = ar[hi]  # last/highest element as pivot
+        i = lo - 1  # temporary index
+        for j in range(lo, hi):
+            if ar[j] <= pivot:  # if the current element is less than or equal to the pivot
+                i += 1  # move the temporary pivot index forward
+                ar[i], ar[j] = ar[j], ar[i]
+        i += 1  # move the pivot element to the correct pivot position (between the smaller and larger elements)
+        ar[i], ar[hi] = ar[hi], ar[i]
+        return i  # return pivot index
