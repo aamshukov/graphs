@@ -16,7 +16,7 @@ class Text(Base):
     """
 
     @staticmethod
-    def equal(lhs, rhs, case_insensitive=False, normalization_form='NFC'):
+    def equal(lhs, rhs, case_insensitive=False, normalization_form='NFKC'):
         """
         """
         assert lhs is not None
@@ -28,7 +28,7 @@ class Text(Base):
             return nfc(lhs) == nfc(rhs)
 
     @staticmethod
-    def compare(lhs, rhs, case_insensitive=False, normalization_form='NFC'):
+    def compare(lhs, rhs, case_insensitive=False, normalization_form='NFKC'):
         """
         """
         assert lhs is not None
