@@ -19,8 +19,40 @@ class Test(unittest.TestCase):
         result = [random.random() for _ in range(n)]
         return result
 
+    def test_quicksort_empty_success(self):  # union find
+        array = []
+        sorted_array = sorted(array)
+        Sorting.quicksort(array)
+        assert array == sorted_array
+
+    def test_quicksort_1_success(self):  # union find
+        array = [1]
+        sorted_array = sorted(array)
+        Sorting.quicksort(array)
+        assert array == sorted_array
+
+    def test_quicksort_2_success(self):  # union find
+        array = [1, 2]
+        sorted_array = sorted(array)
+        Sorting.quicksort(array)
+        assert array == sorted_array
+
+    def test_quicksort_3_success(self):  # union find
+        array = [1, 2, 3]
+        sorted_array = sorted(array)
+        Sorting.quicksort(array)
+        assert array == sorted_array
+
     def test_quicksort_success(self):  # union find
         array = [10, 7, 8, 9, 1, 5]
+        print(array)
+        sorted_array = sorted(array)
+        Sorting.quicksort(array)
+        print(array)
+        assert array == sorted_array
+
+    def test_quicksort_same_success(self):  # union find
+        array = [1] * 1000
         print(array)
         sorted_array = sorted(array)
         Sorting.quicksort(array)

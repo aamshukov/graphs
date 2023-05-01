@@ -10,15 +10,21 @@ class Sorting(Base):
     """
     """
     @staticmethod
-    def quicksort(ar, lo=0, hi=None):
+    def quicksort(ar, lo=0, hi=None, partition=None):
         """
-        Quicksort. Hoare partition scheme.
+        Quicksort. Default is Hoare partition scheme.
         https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
             ar - array to sort
             lo - low/left index
             hi - high/right index
         """
-        def partition(ar, lo=0, hi=None):
+        def _quicksort(_ar, _lo, _hi, _partition):
+            if 0 <= _lo < _hi and _hi >= 0:
+                k = partition(_ar, _lo, _hi)  # k is pivot index and ar[k] at the right place
+                _quicksort(_ar, _lo, k, _partition)
+                _quicksort(_ar, k + 1, _hi, _partition)
+
+        def _hoare_partition(_ar, _lo, _hi):
             """
             The original partition scheme described by Tony Hoare uses two pointers (indices into the range)
             that start at both ends of the array being partitioned, then move toward each other, until they detect
@@ -33,23 +39,22 @@ class Sorting(Base):
             With this formulation it is possible that one sub-range turns out to be the whole original range,
             which would prevent the algorithm from advancing.
             """
-            pivot = ar[lo]  # first/lowest element as pivot
-            i = lo - 1  # left index
-            j = hi + 1  # right index
+            pivot = _ar[_lo]  # first/lowest element as pivot
+            i = _lo - 1  # left index
+            j = _hi + 1  # right index
             while True:
                 i += 1  # move the left index to the right at least once (+1) ...
-                while ar[i] < pivot:  # ... and while the element at the left index is less than the pivot
+                while _ar[i] < pivot:  # ... and while the element at the left index is less than the pivot
                     i += 1
                 j -= 1  # move the right index to the left at least once (-1) ...
-                while ar[j] > pivot:  # ... and while the element at the right index is greater than the pivot
+                while _ar[j] > pivot:  # ... and while the element at the right index is greater than the pivot
                     j -= 1
                 if i >= j:  # if two pointers crossed, either met or crossed
                     return j
-                ar[i], ar[j] = ar[j], ar[i]
+                _ar[i], _ar[j] = _ar[j], _ar[i]
 
         if hi is None:
             hi = len(ar) - 1
-        if 0 <= lo < hi and hi >= 0:
-            k = partition(ar, lo, hi)  # k is pivot index and ar[k] at the right place
-            Sorting.quicksort(ar, lo, k)
-            Sorting.quicksort(ar, k + 1, hi)
+        if partition is None:
+            partition = _hoare_partition
+        _quicksort(ar, lo, hi, partition)
