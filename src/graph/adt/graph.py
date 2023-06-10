@@ -14,12 +14,14 @@ class Graph(Entity):
 
     def __init__(self,
                  id=0,
+                 label='',
                  attributes=None,  # graph specific attributes
                  digraph=False,
                  version='1.0'):
         """
         """
         super().__init__(id, version)
+        self._label=label
         self._root = None  # optional, used in some digraph algorithms
         self._digraph = digraph  # directed or not
         self._attributes = attributes

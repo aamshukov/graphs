@@ -13,7 +13,6 @@ from graph.core.base import Base
 class DomainHelper(Base):
     """
     """
-
     AdjValue = namedtuple('AdjValue', 'vertex edge')
 
     @staticmethod
