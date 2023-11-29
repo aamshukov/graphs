@@ -10,7 +10,7 @@ class Test(unittest.TestCase):
     def test_permutation_rank_unrank_1_success(self):
         p = [0, 1, 2, 3]
         r = Permutation.rank(p)
-        print(f'{r}: {p}')
+        print(f'{r}: {[e + 1 for e in p]}')
         assert r == 23
         p0 = Permutation.unrank(r, len(p))
         assert p0 == p
@@ -18,9 +18,9 @@ class Test(unittest.TestCase):
     def test_permutation_unrank_success(self):
         for k in range(24):
             p = Permutation.unrank(k, 4)
-            print(f'{k}: {p}')
+            print(f'{k}: {[e + 1 for e in p]}')
             r = Permutation.rank(p)
-            print(f'{r}: {p}')
+            print(f'{r}: {[e + 1 for e in p]}')
             p0 = Permutation.unrank(r, len(p))
             assert p0 == p
 

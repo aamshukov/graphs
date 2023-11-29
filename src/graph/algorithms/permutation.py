@@ -80,5 +80,5 @@ class Permutation(Base):
     def cycles_to_string(cycles):
         """
         """ # noqa
-        return ' '.join(["(" + " ".join([str(i) for i in c]) + ")" for c in cycles])
+        return ' '.join(["(" + " ".join([str(i + 1) for i in c]) + ")" for c in cycles])
 
