@@ -34,5 +34,5 @@ class Test(unittest.TestCase):
         for k in range(1, 24):  # starts from 1 as 0 permutation 1,2,3,0 has all single-cycles 0: (1) (2) (3) (4)
             permutation = Permutation.unrank(k, 4)
             cycles = Permutation.calculate_cycles(permutation)
-            print(f'{k}: {Permutation.cycles_to_string(cycles)}')
+            print(f'{k}:  {" ".join([str(e) for e in permutation])}   {Permutation.cycles_to_string(cycles)}')
             assert cycles
