@@ -25,14 +25,32 @@ class Test(unittest.TestCase):
             assert p0 == p
 
     def test_permutation_cycles_1_success(self):
-        permutation = [3, 1, 0, 3]
-        cycles = Permutation.calculate_cycles(permutation)
+        permutation = [0, 1, 2]
+        cycles = Permutation.calculate_cycles(permutation, keep_singles=True)
         print(Permutation.cycles_to_string(cycles))
-        assert cycles == [[1, 3, 0]]
+        assert cycles == [[0], [1], [2]]
 
-    def test_permutation_cycles_success(self):
-        for k in range(1, 24):  # starts from 1 as 0 permutation 1,2,3,0 has all single-cycles 0: (1) (2) (3) (4)
+    def test_permutation_3_cycles_success(self):
+        """
+        https://mathworld.wolfram.com/PermutationCycle.html
+            1:  2 3 1   (1 2 3)
+            2:  3 1 2   (1 3 2)
+            3:  2 1 3   (1 2) (3)
+            4:  3 2 1   (1 3) (2)
+            5:  1 3 2   (1) (2 3)
+            6:  1 2 3   (1) (2) (3)
+        """  # noqa
+        for k in range(6):
+            permutation = Permutation.unrank(k, 3)
+            cycles = Permutation.calculate_cycles(permutation, keep_singles=True)
+            p = permutation
+            print(f'{k + 1}:  {" ".join([str(e) for e in [e + 1 for e in p]])}   {Permutation.cycles_to_string(cycles)}')
+            assert cycles
+
+    def test_permutation_4_cycles_success(self):
+        for k in range(23):  # ends at 23 as 24th permutation 1,2,3,4 has all single-cycles 0: (1) (2) (3) (4)
             permutation = Permutation.unrank(k, 4)
-            cycles = Permutation.calculate_cycles(permutation)
-            print(f'{k}:  {" ".join([str(e) for e in permutation])}   {Permutation.cycles_to_string(cycles)}')
+            cycles = Permutation.calculate_cycles(permutation, keep_singles=False)
+            p = permutation
+            print(f'{k + 1}:  {" ".join([str(e) for e in [e + 1 for e in p]])}   {Permutation.cycles_to_string(cycles)}')
             assert cycles

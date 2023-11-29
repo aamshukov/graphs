@@ -9,24 +9,23 @@ from graph.core.base import Base
 
 class Permutation(Base):
     """
-    """
+    """ # noqa
     @staticmethod
     def rank(permutation):
         """
         Wendy Myrvold, Frank Ruskey, April 2000
         'Ranking and Unranking Permutations in Linear Time'
-        wendym@csr.uvic.ca  fruskey@csr.uvic.ca
         ALGORITHM 317 (CACM) April-May-July 1967
         Charles L. Robinson
         Institute for Computer Research, U. of Chicago, Chicago, Ill.
         """ # noqa
-        def _rank(p, pr, n):
-            if n == 1:
+        def _rank(_p, _pr, _n):
+            if _n == 1:
                 return 0
-            s = p[n - 1]
-            p[n - 1], p[pr[n - 1]] = p[pr[n - 1]], p[n - 1]
-            pr[s], pr[n - 1] = pr[n - 1], pr[s]
-            return s + n * _rank(p, pr, n - 1)
+            s = _p[_n - 1]
+            _p[_n - 1], _p[_pr[_n - 1]] = _p[_pr[_n - 1]], _p[_n - 1]
+            _pr[s], _pr[_n - 1] = _pr[_n - 1], _pr[s]
+            return s + _n * _rank(_p, _pr, _n - 1)
 
         n = len(permutation)
         p = deepcopy(permutation)
@@ -56,29 +55,25 @@ class Permutation(Base):
     @staticmethod
     def calculate_cycles(permutation, keep_singles=False):
         """
-        https://rosettacode.org/wiki/Cycles_of_a_permutation#Python
+        https://gist.github.com/begriffs/2211881
         """ # noqa
-        v = permutation
-        length = len(v)
-        unchecked = [True] * length
-        cycles = []
-        for idx in range(length):
-            if unchecked[idx]:
-                c = [idx + 1]
-                unchecked[idx] = False
-                jidx = idx
-                while unchecked[v[jidx] - 1]:
-                    jidx = v[jidx]
-                    c.append(jidx)
-                    jidx -= 1
-                    unchecked[jidx] = False
-                if len(c) > 1 or keep_singles:
-                    cycles.append(c)
-        return sorted(cycles)
+        perm = set(permutation)
+        result = list()
+        while perm:
+            n = perm.pop()
+            cycle = [n]
+            while True:
+                n = permutation[n]
+                if n not in perm:
+                    break
+                perm.remove(n)
+                cycle.append(n)
+            if len(cycle) > 1 or keep_singles:
+                result.append(cycle)
+        return result
 
     @staticmethod
     def cycles_to_string(cycles):
         """
         """ # noqa
-        return ' '.join(["(" + " ".join([str(i + 1) for i in c]) + ")" for c in cycles])
-
+        return ' '.join(["(" + " ".join([str(e + 1) for e in cycle]) + ")" for cycle in cycles])
