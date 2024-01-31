@@ -54,3 +54,11 @@ class Test(unittest.TestCase):
             p = permutation
             print(f'{k + 1}:  {" ".join([str(e) for e in [e + 1 for e in p]])}   {Permutation.cycles_to_string(cycles)}')
             assert cycles
+
+    def test_permutation_8_cycles_success(self):
+        for k in range(40320 - 1):  # -1 to avoid single-cycle at the end
+            permutation = Permutation.unrank(k, 8)
+            cycles = Permutation.calculate_cycles(permutation, keep_singles=False)
+            p = permutation
+            print(f'{k + 1}:  {" ".join([str(e) for e in [e + 1 for e in p]])}   {Permutation.cycles_to_string(cycles)}')
+            assert cycles

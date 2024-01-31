@@ -15,7 +15,7 @@ class SuffixArray(Base):
     def build_suffix_array(string):
         """
         Naive and slow Suffix Array (SA) construction implementation.
-        """
+        """ # noqa
         suffixes = []
         string = string + '\0'  # includes virtual sentinel (empty suffix)
         string_len = len(string)
@@ -36,7 +36,7 @@ class SuffixArray(Base):
           I. 'Linear Suffix Array Construction by Almost Pure Induced-Sorting' Nong, G., Zhang, S. and Chan, W.
               Data Compression Conference, 2009
           II. and on awesome explanation https://zork.net/~st/jottings/sais.html (thanks!)
-        """
+        """ # noqa
         class SuffixType(str, Enum):
             """
             """
@@ -54,7 +54,7 @@ class SuffixArray(Base):
             S-type suffixes are smaller (in the sorting sense) than the suffix to their right
             (and so must appear closer to the start of the finished suffix array) and L-type suffixes
             are larger than the suffix to their right (and so appear closer to the end).
-            """
+            """ # noqa
             result = [SuffixType.U] * len(string)
             # the last suffix suf(S, n −1) (after the last character) consisting of
             # only the single character $ or 0 (the sentinel) is defined as S-type.
@@ -110,7 +110,7 @@ class SuffixArray(Base):
             mmiissiissiippii
             LLSSLLSSLLSSLLLLS
               ^   ^   ^     ^
-            """
+            """ # noqa
             return (index > 0 and
                     classification[index] == SuffixType.S and
                     classification[index - 1] == SuffixType.L)
@@ -128,7 +128,7 @@ class SuffixArray(Base):
             being LMS characters, and there is no other LMS character in the substring,
             for i != j; or (ii) the sentinel itself.
             ...
-            """
+            """ # noqa
             result = False
             string_len = len(string)
             if index_a < string_len - 1 and index_b < string_len - 1:  # -1 exclude sentinel
@@ -136,7 +136,7 @@ class SuffixArray(Base):
                 while True:
                     a_is_lms = is_left_most_s_char(k + index_a, classification)
                     b_is_lms = is_left_most_s_char(k + index_b, classification)
-                    #  found start of the next LMS substrings ...
+                    # found start of the next LMS substrings ...
                     if k > 0 and a_is_lms and b_is_lms:
                         result = True
                         break
@@ -218,7 +218,7 @@ class SuffixArray(Base):
                                              |  |  | first insertion
                                              |  | second insertion
                                              | third insertion
-            """
+            """ # noqa
             result = [-1] * len(string)  # LMS suffixes
             tails = get_bucket_tails(buckets)
             for k in range(len(string) - 1):  # -1 for excluding virtual sentinel
@@ -241,7 +241,7 @@ class SuffixArray(Base):
                                         show=False):
             """
             Places L-type suffixes into correct positions (left-to-right).
-            """
+            """ # noqa
             heads = get_bucket_heads(buckets)
             for k in range(len(suffixes)):
                 if suffixes[k] == -1:
@@ -266,7 +266,7 @@ class SuffixArray(Base):
                                         show=False):
             """
             Places S-type suffixes into positions (right-to-left).
-            """
+            """ # noqa
             tails = get_bucket_tails(sort_buckets)
             for k in range(len(suffixes) - 1, -1, -1):  # backwards
                 j = suffixes[k]  # current suffix ...
@@ -290,7 +290,7 @@ class SuffixArray(Base):
             Reduces S to S1.
             Name each LMS-substring in S by its bucket index to get a new shortened string S1.
             Get lexicographical names of all (sorted) LMS-substrings and create S1.
-            """
+            """ # noqa
             lms_names = [-1] * len(string)  # indices are treated as names
             curr_name = 0
             lms_names[suffixes[0]] = curr_name  # empty suffix
@@ -323,7 +323,7 @@ class SuffixArray(Base):
         def assemble_suffix_array(string, abc_size):
             """
             Assembles suffix array either directly or recursively calling implementation for complex strings.
-            """
+            """ # noqa
             string_len = len(string)
             if abc_size == string_len:
                 # make suffix array directly with bucket sort
@@ -364,7 +364,7 @@ class SuffixArray(Base):
             """
             Builds suffix array with SA-IS algorithm.
             Might be called recursively.
-            """
+            """ # noqa
             classification = classify_suffixes(string)
             buckets = build_buckets(string, abc_size)
             suffixes = place_lms_suffixes(string, classification, buckets)
@@ -400,7 +400,7 @@ class SuffixArray(Base):
         T. Kasai, G. Lee, H. Arimura, S.Arikawa and K. Park,
         "Linear-time longest-common-prefix computation in suffix arrays and its applications",
         Proc 12th Annual Conference on Combinatorial Pattern Matching, Springer, LNCS 2089 (2001) 181-192.
-        """
+        """ # noqa
         string = string + '\0'  # includes virtual sentinel (empty suffix)
         n = len(suffixes)
         lcp = [0] * n
@@ -424,7 +424,7 @@ class SuffixArray(Base):
     def find_longest_repeated_substring(string, algorithm='sa-is'):
         """
         Finds The Longest Repeated Substring (LRS) with overlapping allowed.
-        """
+        """ # noqa
         if algorithm is None:
             sa = SuffixArray.build_suffix_array(string)
         else:
