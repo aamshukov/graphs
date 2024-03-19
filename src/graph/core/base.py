@@ -2,8 +2,14 @@
 # -*- encoding: utf-8 -*-
 # UI Lab Inc. Arthur Amshukov
 #
+""" Root class """
 from abc import ABCMeta
 
 
 class Base(metaclass=ABCMeta):
-    pass
+    """
+    """
+    def __init__(self):
+        """
+        """
+        pass

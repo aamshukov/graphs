@@ -77,3 +77,29 @@ class Permutation(Base):
         """
         """ # noqa
         return ' '.join(["(" + " ".join([str(e + 1) for e in cycle]) + ")" for cycle in cycles])
+
+    @staticmethod
+    def map_vector(vec):
+        """
+        """
+        num = len(vec)
+        for k in range(num - 1, 0, -1):
+            if vec[k] == 1:
+                break
+            num = num - 1
+        dis = list()  # discriminant
+        run = list()  # current run
+        res = list()  # result
+        ones = 0
+        for k in range(num):
+            if vec[k] == 1:
+                ones = ones + 1
+            else:
+                pass
+        return res
+
+    @staticmethod
+    def unmap_vector(mapped_vector):
+        """
+        """
+        pass

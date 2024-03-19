@@ -62,3 +62,8 @@ class Test(unittest.TestCase):
             p = permutation
             print(f'{k + 1}:  {" ".join([str(e) for e in [e + 1 for e in p]])}   {Permutation.cycles_to_string(cycles)}')
             assert cycles
+
+    def test_permutation_map_vector(self):
+        v = [1, 0, 1, 0, 0, 0]
+        mv = Permutation.map_vector(v)
+        print(mv)

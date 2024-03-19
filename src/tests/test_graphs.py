@@ -73,7 +73,7 @@ class Test(unittest.TestCase):
     def generate_random_graph(n=3, digraph=False):
         p = np.random.rand(n, n)  # your "matrix of probabilities"
         adjacency = np.random.rand(*p.shape) <= p  # adjacency[ii, jj] is True with probability P[ii, jj]
-        nx_graph = nx.from_numpy_matrix(adjacency, nx.DiGraph if digraph else nx.Graph)
+        nx_graph = nx.from_numpy_array(adjacency, nx.DiGraph if digraph else nx.Graph)
         result = Graph(digraph=digraph)
         vertices = dict()
         for vertex in nx_graph.nodes:
@@ -102,7 +102,7 @@ class Test(unittest.TestCase):
     def generate_random_array_queries(n=3):
         p = np.random.rand(n, n)  # your "matrix of probabilities"
         adjacency = np.random.rand(*p.shape) <= p  # adjacency[ii, jj] is True with probability P[ii, jj]
-        nx_graph = nx.from_numpy_matrix(adjacency, nx.Graph)
+        nx_graph = nx.from_numpy_array(adjacency, nx.Graph)
         array = list(nx_graph.nodes)
         queries = list(nx_graph.edges)
         random.shuffle(array)
@@ -112,7 +112,7 @@ class Test(unittest.TestCase):
     def generate_random_queries(n=3):
         p = np.random.rand(n, n)
         adjacency = np.random.rand(*p.shape) <= p
-        result = nx.from_numpy_matrix(adjacency, nx.MultiGraph)
+        result = nx.from_numpy_array(adjacency, nx.MultiGraph)
         return list(result)
 
     def test_disjoint_set_success(self):  # union find
